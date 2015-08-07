@@ -13,11 +13,11 @@ public class StockMarketImpl implements StockMarket {
 	private Stock firstStockInDay;
 	private Reader csvReader;
 	
-	StockMarketImpl(String dataSource) {
+	public StockMarketImpl(String dataSource) {
 		csvReader = new CsvReader(dataSource);
 	}
 	
-	StockMarketImpl() {}
+	public StockMarketImpl() {}
 	
 	@Override
 	public boolean equals(StockMarket compStockMarket) {
@@ -45,6 +45,16 @@ public class StockMarketImpl implements StockMarket {
 	public Stock loadNextStock() {
 		Stock nextStock = getNextStock();
 		stocks.add(nextStock);
+		return nextStock;
+	}
+	
+	@Override
+	public Stock loadNextStocks(int stocksNum) {
+		Stock nextStock = null;
+		for(int i = 0; i < stocksNum; i++) {
+			nextStock = getNextStock();	
+			stocks.add(nextStock);		
+		}
 		return nextStock;
 	}
 	

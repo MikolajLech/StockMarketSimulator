@@ -14,7 +14,6 @@ public class StockMarketTest {
 	@Before
 	public void initTest() {
 		stockMarket = new StockMarketImpl(dataTest);
-		stockMarket.setDataSource(dataTest);
 	}
 	
 	@Test

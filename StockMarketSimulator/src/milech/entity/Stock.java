@@ -8,9 +8,11 @@ public class Stock {
 	private String name;
 	private Date date;
 	private float price;
+	
 	public Stock() {
 		
 	}
+	
 	public Stock(String name, String date, String price) {
 		this.name = name;
 		this.date = Parser.parseDate(date);
