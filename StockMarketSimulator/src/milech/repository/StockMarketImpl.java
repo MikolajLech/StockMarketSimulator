@@ -1,63 +1,97 @@
 package milech.repository;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import milech.entity.Stock;
+import milech.reader.Reader;
+import milech.reader.CsvReader;
 
 public class StockMarketImpl implements StockMarket {
 
 	private List<Stock> stocks = new ArrayList<Stock>();
-	private File dataSource;
+	private Stock firstStockInDay;
+	private Reader csvReader;
+	
+	StockMarketImpl(String dataSource) {
+		csvReader = new CsvReader(dataSource);
+	}
+	
+	StockMarketImpl() {}
 	
 	@Override
-	public void loadNextStock() {
-
-		BufferedReader br = null;
-		String line = "";
-		String csvSplitBy = ",";
-		Stock newStock = new Stock();
-		try {
-			br = new BufferedReader(new FileReader(dataSource));
-//			while ((line = br.readLine()) != null) {
-			if((line = br.readLine()) != null) {
-				// use comma as separator
-				String[] stockData = line.split(csvSplitBy);
-				newStock.setName(stockData[0]);
-				newStock.setDate(stockData[1]);
-				newStock.setPrice(stockData[2]);
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+	public boolean equals(StockMarket compStockMarket) {
+		if(this.getSize() != compStockMarket.getSize())
+			return false;
+		for(int i = 0; i < this.getSize(); i++) {
+			if(!this.stocks.get(i).equals(compStockMarket.getStock(i))) {
+				return false;
 			}
 		}
-		stocks.add(newStock);
+		return true;
 	}
 	
 	@Override
-	public void setDataSource(String dataSource) {
-		this.dataSource = new File(dataSource);
+	public int getSize() {
+		return stocks.size();
 	}
 	
 	@Override
 	public Stock getStock(int index) {
 		return stocks.get(index); 
 	}
+	
+	@Override
+	public Stock loadNextStock() {
+		Stock nextStock = getNextStock();
+		stocks.add(nextStock);
+		return nextStock;
+	}
+	
+	private Stock getNextStock() {
+		String line = "";
+		String csvSplitBy = ",";
+		Stock newStock = new Stock();
+//			while ((line = br.readLine()) != null) {
+		if((line = csvReader.getNextLine()) != null) {
+			// use comma as separator
+			String[] stockData = line.split(csvSplitBy);
+			newStock.setName(stockData[0]);
+			newStock.setDate(stockData[1]);
+			newStock.setPrice(stockData[2]);
+			}
+		return newStock;
+	}
 
+	@Override
+	public void setDataSource(String dataSource) {
+		csvReader = new CsvReader(dataSource);
+	}
+
+	@Override
+	public void loadNextDay() {
+		if(firstStockInDay == null) {
+			firstStockInDay = loadNextStock();
+			
+		}
+		Stock nextStock = getNextStock();
+		while(firstStockInDay.getDate().equals(nextStock.getDate())){
+			stocks.add(nextStock);
+			nextStock = getNextStock();			
+		}
+		firstStockInDay = nextStock;		
+	}
+
+	@Override
+	public void add(Stock stock) {
+		stocks.add(stock);		
+	}
+	
+	@Override
+	public void prtStockMarket() {
+		for(Stock stock : stocks) {
+			System.out.println(stock.toString());
+		}
+	}
 	
 }
