@@ -4,6 +4,8 @@ public interface BrokerageOffice {
 
 	float buy(int stockNum, int stockIndex);
 
-	float sell(int i, int j);
+	float sell(int stockNum, int stockIndex);
+
+	float getPrice(int stockIndex);
 	
 }

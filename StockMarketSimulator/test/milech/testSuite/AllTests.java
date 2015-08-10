@@ -1,3 +1,4 @@
+package milech.testSuite;
 import milech.repository.StockMarketTest;
 import milech.service.BrokerageOfficeTest;
 

@@ -20,8 +20,12 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 	@Override
 	public float sell(int stockNum, int stockIndex) {
 		float wholeCommission = commission *  stockMarket.getStock(stockIndex).getPrice() * stockNum;
-		System.out.println(wholeCommission);
 		return stockMarket.getStock(stockIndex).getPrice() * stockNum + wholeCommission;
+	}
+
+	@Override
+	public float getPrice(int stockIndex) {
+		return stockMarket.getStock(stockIndex).getPrice();
 	}
 
 }
