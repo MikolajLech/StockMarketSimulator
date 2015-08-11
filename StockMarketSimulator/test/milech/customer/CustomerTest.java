@@ -53,15 +53,15 @@ public class CustomerTest {
 	
 	// test parser
 	@Test
-	public void shouldConv1000To26() {
+	public void shouldConv1000To20() {
 		stockMarket.loadNextStock();
-		assertEquals(26 , Parser.convMoneyToStock(1000, stockMarket.getStock(0)));
+		assertEquals(20 , Parser.convMoneyToStock(1000, 50));
 	}
 	
 	@Test
-	public void shouldConv10000To51() {
+	public void shouldConv10000To50() {
 		stockMarket.loadNextStocks(2);
-		assertEquals(51 , Parser.convMoneyToStock(10000, stockMarket.getStock(1)));
+		assertEquals(200 , Parser.convMoneyToStock(10000, 50));
 	}
 	
 	@Test

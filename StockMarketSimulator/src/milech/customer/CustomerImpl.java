@@ -17,6 +17,11 @@ public class CustomerImpl implements Customer {
 	private BrokerageOffice brokerageOffice;
 	private StockAlgorithm stockAlgorithm;
 	
+	@Override
+	public float getMoney() {
+		return money;
+	}
+	
 	public CustomerImpl(BrokerageOffice brokerageOffice) {
 		money = 10000;
 		stockAlgorithm = chooseAlg(1);
@@ -34,8 +39,9 @@ public class CustomerImpl implements Customer {
 	public Stock buyToday() {
 		int stockToBuyIndex = stockAlgorithm.chooseStockToBuy(brokerageOffice.getStockMarket());
 		Stock stockToBuy = brokerageOffice.getStockMarket().getStock(stockToBuyIndex);
-		int howManyStocksToBuy = Parser.convMoneyToStock(money, stockToBuy);
+		int howManyStocksToBuy = Parser.convMoneyToStock(money, buy(1, stockToBuyIndex));
 		float wholeStockCost = buy(howManyStocksToBuy,  stockToBuyIndex);
+		System.out.println(wholeStockCost);
 		money -= wholeStockCost;
 		customerStocks.put(stockToBuyIndex, howManyStocksToBuy);
 		return stockToBuy;

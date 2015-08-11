@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import milech.entity.Stock;
-
 public class Parser {
 	public static Date parseDate(String date) {
 		Date resultDate = null;
@@ -34,7 +32,7 @@ public class Parser {
 		return resultPrice;
 	}
 	
-	public static int convMoneyToStock(float money, Stock stock) {
-		return (int) (money / stock.getPrice());
+	public static int convMoneyToStock(float money, float stockPrice) {
+		return (int) (money / stockPrice);
 	}
 }

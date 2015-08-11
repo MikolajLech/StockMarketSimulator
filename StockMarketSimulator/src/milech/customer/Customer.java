@@ -9,4 +9,5 @@ public interface Customer {
 	StockAlgorithm chooseAlg(int algNum);
 	Stock buyToday();
 	void prtCustomerStocks();
+	float getMoney();
 }

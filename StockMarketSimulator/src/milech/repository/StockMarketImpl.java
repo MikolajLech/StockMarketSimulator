@@ -81,9 +81,9 @@ public class StockMarketImpl implements StockMarket {
 	@Override
 	public void loadNextDay() {
 		if(firstStockInDay == null) {
-			firstStockInDay = loadNextStock();
-			
+			firstStockInDay = getNextStock();
 		}
+		stocks.add(firstStockInDay);
 		Stock nextStock = getNextStock();
 		while(firstStockInDay.getDate().equals(nextStock.getDate())){
 			stocks.add(nextStock);
