@@ -28,4 +28,9 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 		return stockMarket.getStock(stockIndex).getPrice();
 	}
 
+	@Override
+	public StockMarket getStockMarket() {
+		return stockMarket;
+	}
+
 }
