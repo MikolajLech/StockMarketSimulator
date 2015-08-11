@@ -10,6 +10,7 @@ import milech.reader.CsvReader;
 public class StockMarketImpl implements StockMarket {
 
 	private List<Stock> stocks = new ArrayList<Stock>();
+	private List<Stock> oneDay = new ArrayList<Stock>();
 	private Stock firstStockInDay;
 	private Reader csvReader;
 	
@@ -80,16 +81,18 @@ public class StockMarketImpl implements StockMarket {
 
 	@Override
 	public void loadNextDay() {
+		oneDay.clear();
 		if(firstStockInDay == null) {
 			firstStockInDay = getNextStock();
 		}
-		stocks.add(firstStockInDay);
+		oneDay.add(firstStockInDay);
 		Stock nextStock = getNextStock();
 		while(firstStockInDay.getDate().equals(nextStock.getDate())){
-			stocks.add(nextStock);
+			oneDay.add(nextStock);
 			nextStock = getNextStock();			
 		}
-		firstStockInDay = nextStock;		
+		firstStockInDay = nextStock;
+		stocks.addAll(oneDay);
 	}
 
 	@Override
@@ -102,6 +105,11 @@ public class StockMarketImpl implements StockMarket {
 		for(Stock stock : stocks) {
 			System.out.println(stock.toString());
 		}
+	}
+
+	@Override
+	public int getCurrDaySize() {
+		return oneDay.size();
 	}
 	
 }

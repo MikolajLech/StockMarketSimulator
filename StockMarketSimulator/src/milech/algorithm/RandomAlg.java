@@ -12,6 +12,6 @@ public class RandomAlg implements StockAlgorithm {
 	}
 	@Override
 	public int chooseStockToBuy(StockMarket stockMarket) {
-		return generator.nextInt(stockMarket.getSize());
+		return generator.nextInt(stockMarket.getCurrDaySize());
 	}
 }

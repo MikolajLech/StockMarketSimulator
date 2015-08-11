@@ -22,4 +22,6 @@ public interface StockMarket {
 
 	Stock loadNextStocks(int stocksNum);
 
+	int getCurrDaySize();
+
 }
