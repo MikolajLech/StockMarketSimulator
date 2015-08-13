@@ -59,9 +59,41 @@ public class CustomerTest {
 		customer.buyToday("PGNIG", 20);
 		customer.buyToday("JSW", 20);
 		customer.buyToday("TPSA", 10);
-		System.out.println(customer.toString());
 		assertEquals(2118.8, customer.sellAll(), dataAccuracy);
 	}		
-
+	
+	@Test
+	public void shouldBuyTodayFor52_6() {
+		customer.buyToday("PGNIG", 10);
+		assertEquals(10000 - 52.863, customer.getMoney(), dataAccuracy);
+	}		
+	
+	@Test
+	public void shouldBuyTodayFor3881_31() {
+		customer.buyToday("KGHM", 20);
+		assertEquals(10000 - 3881.31, customer.getMoney(), dataAccuracy);
+	}		
+	
+	@Test
+	public void shouldSellTodayWithOutcome8049_49() {
+		customer.buyToday("KGHM", 20);
+		customer.sellToday("KGHM", 10);
+		assertEquals(8049.69, customer.getMoney(), dataAccuracy);
+	}		
+	
+	@Test
+	public void shouldntSellMoreThanHasCustomer9980_69() {
+		customer.buyToday("KGHM", 20);
+		customer.sellToday("KGHM", 30);
+		assertEquals(9980.69, customer.getMoney(), dataAccuracy);
+	}		
+	
+//	@Test
+//	public void shouldBuyWithAlgorithm() {
+//		customer.buyWithAlgorithm();
+//		customer.buyWithAlgorithm();
+//		System.out.println(customer.toString());
+//		assertEquals(2118.8, customer.sellAll(), dataAccuracy);
+//	}		
 	
 }

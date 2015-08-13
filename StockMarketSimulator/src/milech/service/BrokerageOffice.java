@@ -10,7 +10,9 @@ public interface BrokerageOffice {
 
 	float sell(int stockNum, String companyName);
 	
-	Stock findStock(String companyName);
+	Stock findStockToBuy(String companyName);
+	
+	Stock findStockToSell(String companyName);
 	
 	StockMarket getStockMarket();
 

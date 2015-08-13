@@ -18,10 +18,10 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 	}
 	
 	public float buy(int stockNum, String companyName) {
-		return findStock(companyName).getPrice() * stockNum;
+		return findStockToBuy(companyName).getPrice() * stockNum;
 	}
 	
-	public Stock findStock(String companyName) {
+	public Stock findStockToBuy(String companyName) {
         for (Stock stock : stockMarket.getCurrentDay()) {
             if(stock.getName().matches(companyName)) {
             	return stock;
@@ -29,9 +29,20 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
         }
         return null;
 	}
+	
+	public Stock findStockToSell(String companyName) {
+		for (Stock stock : stockMarket.getCurrentDay()) {
+			if(stock.getName().matches(companyName)) {
+				return stock;
+			}
+		}
+		return null;
+	}
+	
+	
 
 	public float sell(int stockNum, String companyName) {
-		Stock foundStock = findStock(companyName);
+		Stock foundStock = findStockToBuy(companyName);
 		float wholeCommission = commission * foundStock.getPrice()  * stockNum;
 		return foundStock.getPrice() * stockNum + wholeCommission;
 	}

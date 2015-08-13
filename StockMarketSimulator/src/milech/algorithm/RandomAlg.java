@@ -1,5 +1,8 @@
 package milech.algorithm;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import milech.entity.Stock;
@@ -11,15 +14,15 @@ public class RandomAlg implements StockAlgorithm {
 	public RandomAlg() {
 		generator = new Random();
 	}
-	@Override
+	
 	public Stock chooseStockToBuy(StockMarket stockMarket) {
 		int randNum = generator.nextInt(stockMarket.getCurrentDay().size());
 		return stockMarket.getCurrentDay().get(randNum);
 	}
 	
-//	@Override
-//	public int chooseStockToSell(Customer customer) {
-//		int positon = generator.nextInt(customer.getCustomerStocksSize());
-//		return (new ArrayList<Integer>(customer.getCustomerStocks().keySet())).get(positon);
-//	}
+	public String chooseStockToSell(Map<String, Integer> customerStocks) {
+		List<String> keys = new ArrayList<String>(customerStocks.keySet());
+		int randNum = generator.nextInt(keys.size());
+		return keys.get(randNum);
+	}
 }
