@@ -1,12 +1,12 @@
 package milech.algorithm;
 
-import milech.customer.Customer;
+import milech.entity.Stock;
 import milech.repository.StockMarket;
 
 public interface StockAlgorithm {
 
-	int chooseStockToBuy(StockMarket stockMarket);
+	Stock chooseStockToBuy(StockMarket stockMarket);
 
-	int chooseStockToSell(Customer customer);
+//	Stock chooseStockToSell(Customer customer);
 
 }

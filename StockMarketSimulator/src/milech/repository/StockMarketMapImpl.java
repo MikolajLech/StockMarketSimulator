@@ -40,6 +40,7 @@ public class StockMarketMapImpl implements StockMarket {
 	
 	public List<Stock> getCurrentDay() {
 		List<Stock> day = stocks.get(iterator.previous());
+		iterator.next();
 		return day;
 	}
 	

@@ -1,9 +1,17 @@
 package milech.service;
 
+import milech.entity.Stock;
+import milech.repository.StockMarket;
+
 
 public interface BrokerageOffice {
 
-	public float buy(int stockNum, String companyName);
+	float buy(int stockNum, String companyName);
 
-	public float sell(int stockNum, String companyName);
+	float sell(int stockNum, String companyName);
+	
+	Stock findStock(String companyName);
+	
+	StockMarket getStockMarket();
+
 }

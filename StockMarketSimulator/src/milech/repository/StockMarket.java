@@ -17,5 +17,5 @@ public interface StockMarket {
 	void setDataSource(String dataSource);
 	
 	public List<Stock> getCurrentDay();
-
+	
 }

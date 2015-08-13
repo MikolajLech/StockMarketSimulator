@@ -1,9 +1,8 @@
 package milech.customer;
 
 import static org.junit.Assert.assertEquals;
-import milech.parse.Parser;
 import milech.repository.StockMarket;
-import milech.repository.StockMarketImpl;
+import milech.repository.StockMarketMapImpl;
 import milech.service.BrokerageOffice;
 import milech.service.BrokerageOfficeImpl;
 
@@ -20,58 +19,49 @@ public class CustomerTest {
 	
 	@Before
 	public void initTest() {
-		stockMarket = new StockMarketImpl(dataTest);
+		stockMarket = new StockMarketMapImpl(dataTest);
 		brokerageOffice = new BrokerageOfficeImpl(stockMarket);
+		stockMarket.getNextDay();
 		customer = new CustomerImpl(brokerageOffice);
 	}
 	
 	@Test
 	public void shouldBuy15StocksFor563_05() {
-		stockMarket.loadNextStock();
-		assertEquals(563.05, customer.buy(15, 0), dataAccuracy);
+		assertEquals(563.05, customer.buy(15, "PKOBP"), dataAccuracy);
 	}	
 	
 	@Test
 	public void shouldBuy25StocksFor4851_63() {
-		stockMarket.loadNextStocks(2);
-		assertEquals(4851.63, customer.buy(25, 1), dataAccuracy);
+		assertEquals(4851.63, customer.buy(25, "KGHM"), dataAccuracy);
 	}		
 	
 	@Test
 	public void shouldSell10StocksFor373_5() {
-		stockMarket.loadNextStock();
-		customer.buy(20, 0);
-		assertEquals(373.5, customer.sell(10, 0), dataAccuracy);
+		customer.buy(20, "PKOBP");
+		assertEquals(373.5, customer.sell(10, "PKOBP"), dataAccuracy);
 	}		
 	
 	@Test
 	public void shouldSell30StocksFor157_8() {
-		stockMarket.loadNextStocks(3);
-		customer.buy(30, 0);
-		assertEquals(157.8, customer.sell(30, 2), dataAccuracy);
+		customer.buy(30, "PGNIG");
+		assertEquals(157.8, customer.sell(30, "PGNIG"), dataAccuracy);
 	}		
 	
-	// test parser
 	@Test
-	public void shouldConv1000To20() {
-		stockMarket.loadNextStock();
-		assertEquals(20 , Parser.convMoneyToStock(1000, 50));
-	}
-	
-	@Test
-	public void shouldConv10000To50() {
-		stockMarket.loadNextStocks(2);
-		assertEquals(200 , Parser.convMoneyToStock(10000, 50));
-	}
+	public void shouldSellAllFor4235_5() {
+		customer.buyToday("PKOBP", 10);
+		customer.buyToday("KGHM", 20);
+		assertEquals(4235.5, customer.sellAll(), dataAccuracy);
+	}		
 	
 	@Test
-	public void shouldBuy() {
-		stockMarket.loadNextDay();
-		System.out.println(customer.buyToday());
-		customer.prtCustomerStocks();
-		assertEquals(157.8, customer.sell(30, 2), dataAccuracy);
-	}	
-	
-	
+	public void shouldSellAll2118_8() {
+		customer.buyToday("PGNIG", 20);
+		customer.buyToday("JSW", 20);
+		customer.buyToday("TPSA", 10);
+		System.out.println(customer.toString());
+		assertEquals(2118.8, customer.sellAll(), dataAccuracy);
+	}		
+
 	
 }

@@ -2,7 +2,7 @@ package milech.entity;
 
 import java.util.Date;
 
-import milech.parse.Parser;
+import milech.parser.Parser;
 
 public class Stock {
 	private String name;
