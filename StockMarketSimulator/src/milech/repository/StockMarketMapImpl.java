@@ -2,13 +2,10 @@ package milech.repository;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import milech.entity.Stock;
@@ -17,10 +14,7 @@ import milech.reader.Reader;
 
 public class StockMarketMapImpl implements StockMarket {
 
-//	private Map<Date, List<Stock>> stocks = new HashMap<Date, List<Stock>>();
 	private Map<Date, List<Stock>> stocks = new TreeMap<Date, List<Stock>>(); // already sorted
-//	private Set days;
-//	private Iterator iterator;
 	private LinkedList<Date> days;
 	private ListIterator iterator;
 	private Reader csvReader;
@@ -49,23 +43,7 @@ public class StockMarketMapImpl implements StockMarket {
 		return day;
 	}
 	
-	
 	public StockMarketMapImpl() {}
-	
-	public boolean equals(StockMarket compStockMarket) {
-		if(this.getDaysNum() != compStockMarket.getDaysNum())
-			return false;
-		for(int i = 0; i < this.getDaysNum(); i++) {
-//			if(!this.stocks.get(i).equals(compStockMarket.getStock(i))) {
-//				return false;
-//			}
-		}
-		return true;
-	}
-	
-	public int getDaysNum() {
-		return stocks.size();
-	}
 	
 	public Stock loadNextStock() {
 		Stock nextStock = getNextStock();

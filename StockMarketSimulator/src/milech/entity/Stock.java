@@ -45,6 +45,8 @@ public class Stock {
 	}
 	
 	public String toString() {
-		return name + " " + date.toString() + " " + price;
+		String outStr = "";
+		outStr += String.format("%s%10s%10s\n", getDate(), getName(), getPrice());
+		return outStr;
 	}
 }

@@ -1,5 +1,8 @@
 package milech.service;
 
+import java.util.List;
+
+import milech.entity.Stock;
 import milech.repository.StockMarket;
 
 public class BrokerageOfficeImpl implements BrokerageOffice{
@@ -12,25 +15,23 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 		commission = 0.005f;
 	}
 	
-	@Override
-	public float buy(int stockNum, int stockIndex) {
-		return stockMarket.getStock(stockIndex).getPrice() * stockNum;
+	public float buy(int stockNum, String companyName) {
+		return findStock(stockMarket.getCurrentDay(), companyName).getPrice() * stockNum;
+	}
+	
+	public Stock findStock(List<Stock> list, String companyName) {
+        for (Stock stock : list) {
+            if(stock.getName().matches(companyName)) {
+            	return stock;
+            }
+        }
+        return null;
 	}
 
-	@Override
-	public float sell(int stockNum, int stockIndex) {
-		float wholeCommission = commission *  stockMarket.getStock(stockIndex).getPrice() * stockNum;
-		return stockMarket.getStock(stockIndex).getPrice() * stockNum + wholeCommission;
-	}
-
-	@Override
-	public float getPrice(int stockIndex) {
-		return stockMarket.getStock(stockIndex).getPrice();
-	}
-
-	@Override
-	public StockMarket getStockMarket() {
-		return stockMarket;
+	public float sell(int stockNum, String companyName) {
+		Stock foundStock = findStock(stockMarket.getCurrentDay(), companyName);
+		float wholeCommission = commission * foundStock.getPrice()  * stockNum;
+		return foundStock.getPrice() * stockNum + wholeCommission;
 	}
 
 }
