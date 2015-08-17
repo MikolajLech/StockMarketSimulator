@@ -88,12 +88,25 @@ public class CustomerTest {
 		assertEquals(9980.69, customer.getMoney(), dataAccuracy);
 	}		
 	
-//	@Test
-//	public void shouldBuyWithAlgorithm() {
-//		customer.buyWithAlgorithm();
-//		customer.buyWithAlgorithm();
-//		System.out.println(customer.toString());
-//		assertEquals(2118.8, customer.sellAll(), dataAccuracy);
-//	}		
+	@Test
+	public void shouldAdd20Stocks() {
+		customer.buyToday("PKOBP", 10);
+		customer.buyToday("PKOBP", 10);
+		assertEquals(20, customer.getCustomerStockNum("PKOBP"), dataAccuracy);
+	}		
+	
+	@Test
+	public void shouldAdd60Stocks() {
+		customer.buyToday("KGHM", 30);
+		customer.buyToday("KGHM", 30);
+		assertEquals(60, customer.getCustomerStockNum("KGHM"), dataAccuracy);
+	}	
+	
+	@Test
+	public void shouldntBuyMoreThanInWallet() {
+		customer.buyToday("KGHM", 30);
+		customer.buyToday("KGHM", 30);
+		assertEquals(60, customer.getCustomerStockNum("KGHM"), dataAccuracy);
+	}		
 	
 }

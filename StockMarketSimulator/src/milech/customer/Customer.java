@@ -14,4 +14,6 @@ public interface Customer {
 	String toString();
 	void buyWithAlgorithm();
 	void sellWithAlgorithm();
+	public int getCustomerStockNum(String companyName);
+
 }

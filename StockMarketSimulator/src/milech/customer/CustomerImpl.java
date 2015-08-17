@@ -3,7 +3,6 @@ package milech.customer;
 import java.util.Map;
 import java.util.TreeMap;
 
-import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
 import milech.entity.Stock;
@@ -20,6 +19,10 @@ public class CustomerImpl implements Customer {
 		return money;
 	}
 	
+	public int getCustomerStockNum(String companyName) {
+		return customerStocks.get(companyName);
+	}
+	
 	public float buy(int stockNum, String companyName) {
 		return brokerageOffice.sell(stockNum, companyName);
 	}
@@ -33,46 +36,54 @@ public class CustomerImpl implements Customer {
 	public String toString() {
 		String resultString = "";
 		resultString += "Customer stocks: \n";
+		if(customerStocks == null) {
+			return "Stock is null!";
+		}
+		if(customerStocks.size() == 0) {
+			return "No Stocks to display";
+		}
 		for(String stockName : customerStocks.keySet()) {
-			resultString += stockName + " " + customerStocks.get(stockName).intValue() + "\n";
+			resultString += stockName;
+			if(customerStocks.get(stockName) == null) {
+				resultString += " emtpy stock\n";
+			}
+			else {
+				resultString += " " + customerStocks.get(stockName).intValue() + "\n";
+			}
 		}
 		return resultString;
 	}
 	
 	public void buyWithAlgorithm() {
-		String stockToBuyName = stockAlgorithm.chooseStockToBuy(brokerageOffice.getStockMarket()).getName();
-		int howMuch = Parser.convMoneyToStock(money, buy(1, stockToBuyName)) / 2;
+		String stockToBuyName = stockAlgorithm.chooseStockToBuy(brokerageOffice.getStockMarket());
+		int howMuch = Parser.convMoneyToStock(stockAlgorithm.buyForHowMuchMoney((int)money), buy(1, stockToBuyName));
 		buyToday(stockToBuyName, howMuch);		
 	}
 	
 	public Stock buyToday(String stockToBuyName, int howMuch) {
 		Stock stockToBuy = brokerageOffice.findStockToBuy(stockToBuyName);
 		float wholeStockCost = buy(howMuch, stockToBuyName);
-//		System.out.println(wholeStockCost);
-		add(stockToBuy, howMuch);
+		add(stockToBuy.getName(), howMuch);
 		money -= wholeStockCost;
 		return stockToBuy;
 	}
 	
-	public Stock add(Stock stock, Integer howMuch) {
-		if(stock == null) {
-			return null;
-		}
-		if(customerStocks.get(stock.getName()) == null) {
-			customerStocks.put(stock.getName(), howMuch);
+	public void add(String companyName, Integer howMuch) {
+		if(customerStocks.get(companyName) == null) {
+			customerStocks.put(companyName, howMuch);
 		}
 		else {
-			Integer newHowMuch = customerStocks.get(stock.getName() + howMuch);
-			customerStocks.put(stock.getName(), newHowMuch);
+			Integer newHowMuch = customerStocks.get(companyName) + howMuch;
+			customerStocks.put(companyName, newHowMuch);
 		}
-		return stock;
 	}
 	
 	public StockAlgorithm chooseAlg(int algNum) {
 		if(algNum == 1) {
 			return new RandomAlg();
 		}
-		return new MovingAverageAlg();
+//		return new MovingAverageAlg();
+		return null;
 	}
 
 	public float sell(int stockNum, String companyName) {
@@ -81,6 +92,9 @@ public class CustomerImpl implements Customer {
 
 	public Stock sellToday(String stockToSellName, int howMuch) {
 		Stock stockToSell = brokerageOffice.findStockToSell(stockToSellName);
+		if(stockToSell == null) {
+			return null;
+		}
 		Integer howMuchStockHasCustomer = customerStocks.get(stockToSell.getName());
 		if(howMuch > howMuchStockHasCustomer) {
 			howMuch = howMuchStockHasCustomer;
@@ -94,8 +108,10 @@ public class CustomerImpl implements Customer {
 	
 	public void sellWithAlgorithm() {
 		String stockToSellName = stockAlgorithm.chooseStockToSell(customerStocks);
-		int howMuch = Parser.convMoneyToStock(money, sell(1, stockToSellName)) / 2;
-		sellToday(stockToSellName, howMuch);		
+		if(stockToSellName != null) {
+			int howMuch = Parser.convMoneyToStock(stockAlgorithm.sellForHowMuchMoney((int)money), sell(1, stockToSellName));
+			sellToday(stockToSellName, howMuch);		
+		}
 	}
 	
 	public Stock remove(Stock stock, Integer howMuch) {
