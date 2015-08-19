@@ -3,32 +3,34 @@ package milech.customer;
 import java.util.Map;
 import java.util.TreeMap;
 
+import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
 import milech.entity.Stock;
+import milech.entity.Wallet;
 import milech.parser.Parser;
 import milech.service.BrokerageOffice;
 
 public class CustomerImpl implements Customer {
-	private float money;
+	private Wallet wallet;
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private BrokerageOffice brokerageOffice;
 	private StockAlgorithm stockAlgorithm;
 	
 	public float getMoney() {
-		return money;
+		return wallet.getMoney();
 	}
 	
 	public int getCustomerStockNum(String companyName) {
 		return customerStocks.get(companyName);
 	}
 	
-	public float buy(int stockNum, String companyName) {
+	public float getCurrentPriceAtBroker(int stockNum, String companyName) {
 		return brokerageOffice.sell(stockNum, companyName);
 	}
 
 	public CustomerImpl(BrokerageOffice brokerageOffice) {
-		money = 10000;
+		wallet = new Wallet(10000);
 		stockAlgorithm = chooseAlg(1);
 		this.brokerageOffice = brokerageOffice;
 	}
@@ -56,15 +58,17 @@ public class CustomerImpl implements Customer {
 	
 	public void buyWithAlgorithm() {
 		String stockToBuyName = stockAlgorithm.chooseStockToBuy(brokerageOffice.getStockMarket());
-		int howMuch = Parser.convMoneyToStock(stockAlgorithm.buyForHowMuchMoney((int)money), buy(1, stockToBuyName));
+		float currentPrice = getCurrentPriceAtBroker(1, stockToBuyName);
+		int maxMoneyToSpend = stockAlgorithm.buyForHowMuchMoney((int)wallet.getMoney());
+		int howMuch = Parser.determineAmountOfStockToBuy(maxMoneyToSpend, currentPrice);
 		buyToday(stockToBuyName, howMuch);		
 	}
 	
 	public Stock buyToday(String stockToBuyName, int howMuch) {
 		Stock stockToBuy = brokerageOffice.findStockToBuy(stockToBuyName);
-		float wholeStockCost = buy(howMuch, stockToBuyName);
+		float wholeStockCost = getCurrentPriceAtBroker(howMuch, stockToBuyName);
 		add(stockToBuy.getName(), howMuch);
-		money -= wholeStockCost;
+		wallet.takeMoneyFromWallet(wholeStockCost);
 		return stockToBuy;
 	}
 	
@@ -82,8 +86,7 @@ public class CustomerImpl implements Customer {
 		if(algNum == 1) {
 			return new RandomAlg();
 		}
-//		return new MovingAverageAlg();
-		return null;
+		return new MovingAverageAlg();
 	}
 
 	public float sell(int stockNum, String companyName) {
@@ -102,14 +105,14 @@ public class CustomerImpl implements Customer {
 		float wholeStockCost = sell(howMuch, stockToSellName);
 //		System.out.println(wholeStockCost);
 		remove(stockToSell, howMuch);
-		money += wholeStockCost;
+		wallet.addMoneyToWallet(wholeStockCost);
 		return stockToSell;
 	}
 	
 	public void sellWithAlgorithm() {
 		String stockToSellName = stockAlgorithm.chooseStockToSell(customerStocks);
 		if(stockToSellName != null) {
-			int howMuch = Parser.convMoneyToStock(stockAlgorithm.sellForHowMuchMoney((int)money), sell(1, stockToSellName));
+			int howMuch = Parser.determineAmountOfStockToBuy(stockAlgorithm.sellForHowMuchMoney((int)wallet.getMoney()), sell(1, stockToSellName));
 			sellToday(stockToSellName, howMuch);		
 		}
 	}

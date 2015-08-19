@@ -32,7 +32,7 @@ public class Parser {
 		return resultPrice;
 	}
 	
-	public static int convMoneyToStock(float money, float stockPrice) {
+	public static int determineAmountOfStockToBuy(float money, float stockPrice) {
 		return (int) (money / stockPrice);
 	}
 }

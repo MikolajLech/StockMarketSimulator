@@ -8,7 +8,7 @@ public interface StockMarket {
 
 	Stock add(Stock stock);
 
-	List<Stock> getNextDay();
+	boolean getNextDay();
 
 	Stock loadNextStock();
 

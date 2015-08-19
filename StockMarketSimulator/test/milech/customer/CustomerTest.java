@@ -27,23 +27,23 @@ public class CustomerTest {
 	
 	@Test
 	public void shouldBuy15StocksFor563_05() {
-		assertEquals(563.05, customer.buy(15, "PKOBP"), dataAccuracy);
+		assertEquals(563.05, customer.getCurrentPriceAtBroker(15, "PKOBP"), dataAccuracy);
 	}	
 	
 	@Test
 	public void shouldBuy25StocksFor4851_63() {
-		assertEquals(4851.63, customer.buy(25, "KGHM"), dataAccuracy);
+		assertEquals(4851.63, customer.getCurrentPriceAtBroker(25, "KGHM"), dataAccuracy);
 	}		
 	
 	@Test
 	public void shouldSell10StocksFor373_5() {
-		customer.buy(20, "PKOBP");
+		customer.getCurrentPriceAtBroker(20, "PKOBP");
 		assertEquals(373.5, customer.sell(10, "PKOBP"), dataAccuracy);
 	}		
 	
 	@Test
 	public void shouldSell30StocksFor157_8() {
-		customer.buy(30, "PGNIG");
+		customer.getCurrentPriceAtBroker(30, "PGNIG");
 		assertEquals(157.8, customer.sell(30, "PGNIG"), dataAccuracy);
 	}		
 	

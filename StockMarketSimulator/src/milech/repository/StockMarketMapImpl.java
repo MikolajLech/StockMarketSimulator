@@ -30,12 +30,12 @@ public class StockMarketMapImpl implements StockMarket {
 		while(loadNextStock() != null) {}
 	}
 	
-	public List<Stock> getNextDay() {
+	public boolean getNextDay() {
 		if(iterator.hasNext()) {
-			List<Stock> day = stocks.get(iterator.next());
-			return day;
+			iterator.next();
+			return true;
 		}
-		return null;
+		return false;
 	}
 	
 	public List<Stock> getCurrentDay() {

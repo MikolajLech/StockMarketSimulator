@@ -4,7 +4,7 @@ import milech.algorithm.StockAlgorithm;
 import milech.entity.Stock;
 
 public interface Customer {
-	float buy(int stockNum, String companyName);
+	float getCurrentPriceAtBroker(int stockNum, String companyName);
 	float sell(int stockNum, String companyName);
 	StockAlgorithm chooseAlg(int algNum);
 	Stock buyToday(String stockToBuyName, int howMuch);
