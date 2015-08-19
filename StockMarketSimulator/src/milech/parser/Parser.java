@@ -35,4 +35,9 @@ public class Parser {
 	public static int determineAmountOfStockToBuy(float money, float stockPrice) {
 		return (int) (money / stockPrice);
 	}
+	
+	public static float round(float money, int pointPosition) {
+		double position = (int)Math.pow(10, pointPosition);
+		return (float)(Math.round(money*position)/position);
+	}
 }

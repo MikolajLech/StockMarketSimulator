@@ -1,5 +1,8 @@
 package milech.entity;
 
+import milech.parser.Parser;
+
+
 public class Wallet {
 	float money;
 	
@@ -8,6 +11,7 @@ public class Wallet {
 	}
 
 	public float getMoney() {
+		money = Parser.round(money, 2);
 		return money;
 	}
 	
@@ -18,4 +22,5 @@ public class Wallet {
 	public void takeMoneyFromWallet(float money) {
 		this.money -= money;		
 	}
+	
 }

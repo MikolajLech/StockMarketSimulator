@@ -21,7 +21,5 @@ public class App {
 		System.out.println("Left Money: " + customer.getMoney());
 		System.out.println("Money from selling: " + customer.sellAll());
 		System.out.println();
-		
-//		System.out.println(stockMarket.toString());
 	}
 }

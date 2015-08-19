@@ -103,7 +103,6 @@ public class CustomerImpl implements Customer {
 			howMuch = howMuchStockHasCustomer;
 		}
 		float wholeStockCost = sell(howMuch, stockToSellName);
-//		System.out.println(wholeStockCost);
 		remove(stockToSell, howMuch);
 		wallet.addMoneyToWallet(wholeStockCost);
 		return stockToSell;
