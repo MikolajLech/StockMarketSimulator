@@ -18,4 +18,6 @@ public interface StockMarket {
 	
 	public List<Stock> getCurrentDay();
 	
+	public int size();
+	
 }

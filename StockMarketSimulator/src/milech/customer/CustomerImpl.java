@@ -1,12 +1,14 @@
 package milech.customer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
-import milech.entity.Stock;
 import milech.entity.Wallet;
 import milech.parser.Parser;
 import milech.service.BrokerageOffice;
@@ -17,27 +19,110 @@ public class CustomerImpl implements Customer {
 	private BrokerageOffice brokerageOffice;
 	private StockAlgorithm stockAlgorithm;
 	
+	public CustomerImpl(BrokerageOffice brokerageOffice) {
+		wallet = new Wallet(10000);
+		stockAlgorithm = chooseAlgorithm(1);
+		this.brokerageOffice = brokerageOffice;
+	}
+	
+	private void addStockToCustomerStocks(String companyName, Integer howMuch) {
+		if(howMuch == 0) {
+			return;
+		}
+		if(customerStocks.get(companyName) == null) {
+			customerStocks.put(companyName, howMuch);
+		}
+		else {
+			Integer newHowMuch = customerStocks.get(companyName) + howMuch;
+			customerStocks.put(companyName, newHowMuch);
+		}
+	}
+	
+	private void buyManyDifferentStocks(Map<String, Integer> stocksToBuy) {
+		//entry 
+		for(String stockName : stocksToBuy.keySet()) {
+			buySameStock(stockName, stocksToBuy.get(stockName));
+		}
+	}
+	
+	private void buySameStock(String stockToBuyName, int howManyStocks) {
+		float currentStockPrice = brokerageOffice.getCurrentBuyPrice(stockToBuyName);
+		float wholeStockCost = currentStockPrice * howManyStocks;
+		while(!wallet.ifWalletCanAfford(wholeStockCost) && howManyStocks > 0) {
+			howManyStocks--;
+			wholeStockCost = currentStockPrice * howManyStocks;
+		}
+		wallet.takeMoneyFromWallet(wholeStockCost);
+		howManyStocks = Parser.howManyStocksToBuy(wholeStockCost, currentStockPrice);
+		addStockToCustomerStocks(stockToBuyName, howManyStocks);
+	}
+	
+	public void buyWithAlgorithm() {
+		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(brokerageOffice.getStockMarket(), wallet);
+		buyManyDifferentStocks(stocksToBuy);
+	}
+	
+	private StockAlgorithm chooseAlgorithm(int algNum) {
+		if(algNum == 1) {
+			return new RandomAlg();
+		}
+		return new MovingAverageAlg();
+	}
+	
 	public float getMoney() {
 		return wallet.getMoney();
 	}
 	
-	public int getCustomerStockNum(String companyName) {
-		return customerStocks.get(companyName);
+	public float sellAll() {
+		float resultMoney = 0;
+//		for(String stockName : customerStocks.keySet()) {
+//			resultMoney += sellSameStock(stockName, customerStocks.get(stockName));
+//		}
+		List<String> stockNames = new ArrayList<String>(customerStocks.keySet());
+		Iterator<String> stockNamesIterator = stockNames.iterator();
+		while(stockNamesIterator.hasNext()) {
+			String stockName = stockNamesIterator.next();
+			resultMoney += sellSameStock(stockName, customerStocks.get(stockName));
+		}
+		return Parser.round(resultMoney, 2);
 	}
 	
-	public float getCurrentPriceAtBroker(int stockNum, String companyName) {
-		return brokerageOffice.sell(stockNum, companyName);
+	private void sellManyDifferentStocks(Map<String, Integer> stocksToSell) {
+		for(String stockName : stocksToSell.keySet()) {
+			sellSameStock(stockName, stocksToSell.get(stockName));
+		}		
 	}
-
-	public CustomerImpl(BrokerageOffice brokerageOffice) {
-		wallet = new Wallet(10000);
-		stockAlgorithm = chooseAlg(1);
-		this.brokerageOffice = brokerageOffice;
+	
+	private float sellSameStock(String stockToSellName, int howManyStocks) {
+		if(howManyStocks > customerStocks.get(stockToSellName)) {
+			howManyStocks = customerStocks.get(stockToSellName);
+		}
+		float wholeStockCost = brokerageOffice.getCurrentSellPrice(stockToSellName) * howManyStocks;
+		subtractStockFromCustomerStocks(stockToSellName, howManyStocks);
+		wallet.addMoneyToWallet(wholeStockCost);
+		return wholeStockCost;
+	}
+	
+	public void sellWithAlgorithm() {
+		Map<String, Integer> stocksToSell = stockAlgorithm.chooseStocksToSell(customerStocks);
+		sellManyDifferentStocks(stocksToSell);
+	}
+	
+	private void subtractStockFromCustomerStocks(String stockName, int howManyStocks) {
+		if(customerStocks.get(stockName) == null){
+			return;
+		}
+		Integer howManyStocksHasCustomer = customerStocks.get(stockName);
+		if(howManyStocks >= howManyStocksHasCustomer) {
+			customerStocks.remove(stockName);
+			return;
+		}
+		Integer newHowMuch = howManyStocksHasCustomer - howManyStocks;
+		customerStocks.put(stockName, newHowMuch);
 	}
 	
 	public String toString() {
 		String resultString = "";
-		resultString += "Customer stocks: \n";
 		if(customerStocks == null) {
 			return "Stock is null!";
 		}
@@ -54,92 +139,6 @@ public class CustomerImpl implements Customer {
 			}
 		}
 		return resultString;
-	}
-	
-	public void buyWithAlgorithm() {
-		String stockToBuyName = stockAlgorithm.chooseStockToBuy(brokerageOffice.getStockMarket());
-		float currentPrice = getCurrentPriceAtBroker(1, stockToBuyName);
-		int maxMoneyToSpend = stockAlgorithm.buyForHowMuchMoney((int)wallet.getMoney());
-		int howMuch = Parser.determineAmountOfStockToBuy(maxMoneyToSpend, currentPrice);
-		buyToday(stockToBuyName, howMuch);		
-	}
-	
-	public Stock buyToday(String stockToBuyName, int howMuch) {
-		Stock stockToBuy = brokerageOffice.findStockToBuy(stockToBuyName);
-		float wholeStockCost = getCurrentPriceAtBroker(howMuch, stockToBuyName);
-		add(stockToBuy.getName(), howMuch);
-		wallet.takeMoneyFromWallet(wholeStockCost);
-		return stockToBuy;
-	}
-	
-	public void add(String companyName, Integer howMuch) {
-		if(customerStocks.get(companyName) == null) {
-			customerStocks.put(companyName, howMuch);
-		}
-		else {
-			Integer newHowMuch = customerStocks.get(companyName) + howMuch;
-			customerStocks.put(companyName, newHowMuch);
-		}
-	}
-	
-	public StockAlgorithm chooseAlg(int algNum) {
-		if(algNum == 1) {
-			return new RandomAlg();
-		}
-		return new MovingAverageAlg();
-	}
-
-	public float sell(int stockNum, String companyName) {
-		return brokerageOffice.buy(stockNum, companyName);
-	}
-
-	public Stock sellToday(String stockToSellName, int howMuch) {
-		Stock stockToSell = brokerageOffice.findStockToSell(stockToSellName);
-		if(stockToSell == null) {
-			return null;
-		}
-		Integer howMuchStockHasCustomer = customerStocks.get(stockToSell.getName());
-		if(howMuch > howMuchStockHasCustomer) {
-			howMuch = howMuchStockHasCustomer;
-		}
-		float wholeStockCost = sell(howMuch, stockToSellName);
-		remove(stockToSell, howMuch);
-		wallet.addMoneyToWallet(wholeStockCost);
-		return stockToSell;
-	}
-	
-	public void sellWithAlgorithm() {
-		String stockToSellName = stockAlgorithm.chooseStockToSell(customerStocks);
-		if(stockToSellName != null) {
-			int howMuch = Parser.determineAmountOfStockToBuy(stockAlgorithm.sellForHowMuchMoney((int)wallet.getMoney()), sell(1, stockToSellName));
-			sellToday(stockToSellName, howMuch);		
-		}
-	}
-	
-	public Stock remove(Stock stock, Integer howMuch) {
-		Integer howMuchStockHasCustomer = customerStocks.get(stock.getName());
-		if(stock == null || customerStocks.get(stock.getName()) == null){
-			return null;
-		}
-		if(howMuch > howMuchStockHasCustomer) {
-			howMuch = howMuchStockHasCustomer;
-		}
-		Integer newHowMuch = howMuchStockHasCustomer - howMuch;
-		if(newHowMuch == 0) {
-			customerStocks.remove(stock.getName());
-		}
-		else {
-			customerStocks.put(stock.getName(), newHowMuch);
-		}
-		return stock;
-	}
-	
-	public float sellAll() {
-		float resultMoney = 0;
-		for(String stockName : customerStocks.keySet()) {
-			resultMoney += sell(customerStocks.get(stockName).intValue(), stockName);
-		}
-		return resultMoney;
 	}
 	
 	

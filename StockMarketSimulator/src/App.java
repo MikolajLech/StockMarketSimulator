@@ -13,13 +13,14 @@ public class App {
 		BrokerageOffice brokerageOffice = new BrokerageOfficeImpl(stockMarket);
 		Customer customer = new CustomerImpl(brokerageOffice);
 		
+		
 		while(stockMarket.getNextDay()) { 
 			customer.sellWithAlgorithm();
 			customer.buyWithAlgorithm();                                                     
 		}
 		
+		System.out.println("Customers stocks: \n" + customer.toString());
 		System.out.println("Left Money: " + customer.getMoney());
 		System.out.println("Money from selling: " + customer.sellAll());
-		System.out.println();
 	}
 }

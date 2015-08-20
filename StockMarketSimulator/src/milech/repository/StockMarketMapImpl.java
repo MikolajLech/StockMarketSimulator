@@ -26,6 +26,10 @@ public class StockMarketMapImpl implements StockMarket {
 		iterator = days.listIterator();
 	}
 	
+	public int size() {
+		return stocks.size();
+	}
+	
 	public void loadAllData() {
 		while(loadNextStock() != null) {}
 	}
