@@ -18,27 +18,28 @@ public class BrokerageOfficeTest {
 	public void initTest() {
 		stockMarket = new StockMarketMapImpl(dataTest);
 		brokerageOffice = new BrokerageOfficeImpl(stockMarket);
-		stockMarket.getNextDay();
+		stockMarket.moveXDaysForward(1);
 	}
 	
 	@Test
-	public void shouldBuy100StocksFor3735() {
-		assertEquals(3735, brokerageOffice.buy(100, "PKOBP"), dataAccuracy);
+	public void shouldGetStockToBuy37_35() {
+		assertEquals(37.35, brokerageOffice.getCurrentBuyPrice("PKOBP"), dataAccuracy);
 	}	
 	
 	@Test
-	public void shouldBuy10StocksFor1931() {
-		assertEquals(1931, brokerageOffice.buy(10, "KGHM"), dataAccuracy);
+	public void shouldGetStockToBuy5_26() {
+		assertEquals(5.26, brokerageOffice.getCurrentBuyPrice("PGNIG"), dataAccuracy);
 	}	
 	
 	@Test
-	public void shouldSell15StocksFor563_05() {
-		assertEquals(563.05, brokerageOffice.sell(15, "PKOBP"), dataAccuracy);
+	public void shouldGetStockToSell94_60() {
+		assertEquals(94.60, brokerageOffice.getCurrentBuyPrice("JSW"), dataAccuracy);
 	}	
 	
 	@Test
-	public void shouldSell25StocksFor4851_63() {
-		assertEquals(4851.63, brokerageOffice.sell(25, "KGHM"), dataAccuracy);
+	public void shouldGetStockToSell12_16() {
+		assertEquals(12.16, brokerageOffice.getCurrentBuyPrice("TPSA"), dataAccuracy);
 	}	
+	
 	
 }

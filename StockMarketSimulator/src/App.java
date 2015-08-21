@@ -14,7 +14,7 @@ public class App {
 		Customer customer = new CustomerImpl(brokerageOffice);
 		
 		
-		while(stockMarket.getNextDay()) { 
+		while(stockMarket.moveToNextDay()) { 
 			customer.sellWithAlgorithm();
 			customer.buyWithAlgorithm();                                                     
 		}

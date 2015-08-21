@@ -19,7 +19,7 @@ public class RandomAlg implements StockAlgorithm {
 	
 	public Map<String, Integer> chooseStocksToBuy(StockMarket stockMarketTillToday, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
-		if(stockMarketTillToday == null || stockMarketTillToday.size() == 0) {
+		if(stockMarketTillToday == null || stockMarketTillToday.getStockSize() == 0) {
 			return mapOfStocksToBuy;
 		}
 		int daySize = stockMarketTillToday.getCurrentDay().size();

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import milech.entity.Stock;
@@ -14,7 +15,7 @@ import milech.reader.Reader;
 
 public class StockMarketMapImpl implements StockMarket {
 
-	private Map<Date, List<Stock>> stocks = new TreeMap<Date, List<Stock>>(); // already sorted
+	private SortedMap<Date, List<Stock>> stocks = new TreeMap<Date, List<Stock>>(); // already sorted
 	private LinkedList<Date> days;
 	private ListIterator iterator;
 	private Reader csvReader;
@@ -22,11 +23,20 @@ public class StockMarketMapImpl implements StockMarket {
 	public StockMarketMapImpl(String dataSource) {
 		csvReader = new CsvReader(dataSource);
 		loadAllData();
+		init();
+	}
+	
+	private void init() {
 		days = new LinkedList<Date>(stocks.keySet());
 		iterator = days.listIterator();
 	}
 	
-	public int size() {
+	public StockMarketMapImpl(Map<Date, List<Stock>> stockMarketMap) {
+		stocks.putAll(stockMarketMap);
+		init();
+	}
+	
+	public int getStockSize() {
 		return stocks.size();
 	}
 	
@@ -34,7 +44,7 @@ public class StockMarketMapImpl implements StockMarket {
 		while(loadNextStock() != null) {}
 	}
 	
-	public boolean getNextDay() {
+	public boolean moveToNextDay() {
 		if(iterator.hasNext()) {
 			iterator.next();
 			return true;
@@ -42,10 +52,37 @@ public class StockMarketMapImpl implements StockMarket {
 		return false;
 	}
 	
+	private boolean backToPreviousDay() {
+		if(iterator.hasPrevious()) {
+			iterator.previous();
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean moveXDaysForward(int howManyDays) {
+		boolean ifLoadedWell = true;
+		for(int i = 0; i < howManyDays && ifLoadedWell; i++) {
+			ifLoadedWell = moveToNextDay();
+		}
+		return ifLoadedWell;
+	}
+	
 	public List<Stock> getCurrentDay() {
-		List<Stock> day = stocks.get(iterator.previous());
-		iterator.next();
+		List<Stock> day = null;
+		if(iterator.hasPrevious()) {
+			day = stocks.get(iterator.previous());
+			iterator.next();
+		}
 		return day;
+	}
+	
+	public StockMarket getStockMarketTillToday() {
+		moveToNextDay(); // for closed range in subMap 
+		Map<Date, List<Stock>> stocksTillToday = stocks.subMap(stocks.firstKey(), getCurrentDay().get(0).getDate());
+		Maps.filterKeys(map, Range.closed(0, 4)); //includes 1 and 3
+		backToPreviousDay();
+		return new StockMarketMapImpl(stocksTillToday);
 	}
 	
 	public StockMarketMapImpl() {}

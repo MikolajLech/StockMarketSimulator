@@ -8,13 +8,18 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 	private StockMarket stockMarket;
 	private float commission;
 	
-	public StockMarket getStockMarket() {
-		return stockMarket;
-	}
-	
 	public BrokerageOfficeImpl(StockMarket stockMarket) {
 		this.stockMarket = stockMarket;
 		commission = 0.005f;
+	}
+	
+	private Stock findStockInDay(String stockName) {
+        for (Stock stock : stockMarket.getCurrentDay()) {
+            if(stock.getName().matches(stockName)) {
+            	return stock;
+            }
+        }
+        return null;
 	}
 	
 	public float getCurrentBuyPrice(String stockToBuyName) {
@@ -26,13 +31,8 @@ public class BrokerageOfficeImpl implements BrokerageOffice{
 		return stockPrice + commission * stockPrice;
 	}
 	
-	private Stock findStockInDay(String stockName) {
-        for (Stock stock : stockMarket.getCurrentDay()) {
-            if(stock.getName().matches(stockName)) {
-            	return stock;
-            }
-        }
-        return null;
+	public StockMarket getStockMarket() {
+		return stockMarket;
 	}
 	
 }
