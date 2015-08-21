@@ -1,4 +1,4 @@
-package parser;
+package milech.parser;
 
 import static org.junit.Assert.assertEquals;
 import milech.customer.Customer;
