@@ -13,16 +13,30 @@ import milech.entity.Wallet;
 import milech.parser.Parser;
 import milech.service.BrokerageOffice;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("customer")
 public class CustomerImpl implements Customer {
 	private Wallet wallet;
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
-	private BrokerageOffice brokerageOffice;
 	private StockAlgorithm stockAlgorithm;
 	
+	@Autowired
+	private BrokerageOffice brokerageOffice;
+	
 	public CustomerImpl(BrokerageOffice brokerageOffice) {
+		init();
+		this.brokerageOffice = brokerageOffice;
+	}
+	
+	public CustomerImpl() {
+		init();
+	}
+	
+	private void init() {
 		wallet = new Wallet(10000);
 		stockAlgorithm = chooseAlgorithm(1);
-		this.brokerageOffice = brokerageOffice;
 	}
 	
 	private void addStockToCustomerStocks(String companyName, Integer howMuch) {

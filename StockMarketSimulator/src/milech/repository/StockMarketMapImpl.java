@@ -13,9 +13,12 @@ import milech.entity.Stock;
 import milech.reader.CsvReader;
 import milech.reader.Reader;
 
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Range;
 
+@Repository("stockMarket")
 public class StockMarketMapImpl implements StockMarket {
 
 	private SortedMap<Date, List<Stock>> stocks = new TreeMap<Date, List<Stock>>(); // already sorted
@@ -28,6 +31,18 @@ public class StockMarketMapImpl implements StockMarket {
 		loadAllData();
 		init();
 	}
+	
+	public StockMarketMapImpl() {
+		initCsvReader();
+		loadAllData();
+		init();
+	}
+	
+//	@Value("#{fileName}")
+	private void initCsvReader() {
+		csvReader = new CsvReader("resources/data.csv");
+	}
+	
 	
 	private void init() {
 		days = new LinkedList<Date>(stocks.keySet());
@@ -85,8 +100,6 @@ public class StockMarketMapImpl implements StockMarket {
 				Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
 		return new StockMarketMapImpl(stocksTillToday);
 	}
-	
-	public StockMarketMapImpl() {}
 	
 	public Stock loadNextStock() {
 		Stock nextStock = getNextStock();

@@ -3,7 +3,6 @@ package milech.parser;
 import static org.junit.Assert.assertEquals;
 import milech.customer.Customer;
 import milech.customer.CustomerImpl;
-import milech.parser.Parser;
 import milech.repository.StockMarket;
 import milech.repository.StockMarketMapImpl;
 import milech.service.BrokerageOffice;
