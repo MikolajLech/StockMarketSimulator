@@ -73,10 +73,10 @@ public class StockMarketTest {
 	
 	@Test
 	public void shouldGetStocksTillToday() {
-		stockMarket.moveXDaysForward(4);
+		stockMarket.moveXDaysForward(2);
 		System.out.println(stockMarket.toString());
 		System.out.println("size: " + stockMarket.getStockMarketTillToday().getStockSize() 
-				+ "till today: \n" + stockMarket.getStockMarketTillToday().toString());
+				+ " till today: \n" + stockMarket.getStockMarketTillToday().toString());
 	}
 	
 }

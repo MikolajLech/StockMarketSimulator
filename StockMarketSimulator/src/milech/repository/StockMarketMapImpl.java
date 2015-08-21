@@ -13,6 +13,9 @@ import milech.entity.Stock;
 import milech.reader.CsvReader;
 import milech.reader.Reader;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
+
 public class StockMarketMapImpl implements StockMarket {
 
 	private SortedMap<Date, List<Stock>> stocks = new TreeMap<Date, List<Stock>>(); // already sorted
@@ -78,10 +81,8 @@ public class StockMarketMapImpl implements StockMarket {
 	}
 	
 	public StockMarket getStockMarketTillToday() {
-		moveToNextDay(); // for closed range in subMap 
-		Map<Date, List<Stock>> stocksTillToday = stocks.subMap(stocks.firstKey(), getCurrentDay().get(0).getDate());
-		Maps.filterKeys(map, Range.closed(0, 4)); //includes 1 and 3
-		backToPreviousDay();
+		Map<Date, List<Stock>> stocksTillToday =
+				Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
 		return new StockMarketMapImpl(stocksTillToday);
 	}
 	
