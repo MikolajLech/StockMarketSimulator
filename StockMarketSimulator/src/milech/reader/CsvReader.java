@@ -18,7 +18,6 @@ public class CsvReader implements Reader{
 		}
 	}
 
-	@Override
 	public String getNextLine() {
 		if(lastUsedLine >= data.size()) {
 			return null;

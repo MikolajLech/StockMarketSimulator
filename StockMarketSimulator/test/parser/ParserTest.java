@@ -24,19 +24,19 @@ public class ParserTest {
 	public void initTest() {
 		stockMarket = new StockMarketMapImpl(dataTest);
 		brokerageOffice = new BrokerageOfficeImpl(stockMarket);
-		stockMarket.getNextDay();
+		stockMarket.moveXDaysForward(1);
 		customer = new CustomerImpl(brokerageOffice);
 	}
 	
 	// test parser
 	@Test
 	public void shouldConv1000To20() {
-		assertEquals(20 , Parser.convMoneyToStock(1000, 50));
+		assertEquals(20 , Parser.howManyStocksToBuy(1000, 50));
 	}
 	
 	@Test
 	public void shouldConv10000To50() {
-		assertEquals(200 , Parser.convMoneyToStock(10000, 50));
+		assertEquals(200 , Parser.howManyStocksToBuy(10000, 50));
 	}	
 	
 	

@@ -2,16 +2,13 @@ package milech.algorithm;
 
 import java.util.Map;
 
+import milech.entity.Wallet;
 import milech.repository.StockMarket;
 
 public interface StockAlgorithm {
 
-	String chooseStockToBuy(StockMarket stockMarket);
+	Map<String, Integer> chooseStocksToBuy(StockMarket stockMarketTillToday, Wallet wallet);
 
-	String chooseStockToSell(Map<String, Integer> customerStocks);
-
-	int buyForHowMuchMoney(int money);
-
-	int sellForHowMuchMoney(int money);
+	Map<String, Integer> chooseStocksToSell(Map<String, Integer> customerStocks);
 
 }
