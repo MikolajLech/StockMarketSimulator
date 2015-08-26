@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
 import milech.entity.Wallet;
@@ -80,7 +79,7 @@ public class CustomerImpl implements Customer {
 		if(algNum == 1) {
 			return new RandomAlg();
 		}
-		return new MovingAverageAlg();
+		return null;
 	}
 	
 	public float getMoney() {
