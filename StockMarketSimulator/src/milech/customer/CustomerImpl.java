@@ -71,7 +71,8 @@ public class CustomerImpl implements Customer {
 	}
 	
 	public void buyWithAlgorithm() {
-		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(brokerageOffice.getStockMarket(), wallet);
+		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(
+				brokerageOffice.getStockMarket().getStockMarketTillToday(), wallet);
 		buyManyDifferentStocks(stocksToBuy);
 	}
 	
