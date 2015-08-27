@@ -7,8 +7,8 @@ import milech.repository.StockMarket;
 
 public interface StockAlgorithm {
 
-	Map<String, Integer> chooseStocksToBuy(StockMarket stockMarketTillToday, Wallet wallet);
+	Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet);
 
-	Map<String, Integer> chooseStocksToSell(Map<String, Integer> customerStocks);
+	Map<String, Integer> chooseStocksToSell(StockMarket subStockMarket, Map<String, Integer> customerStocks);
 
 }

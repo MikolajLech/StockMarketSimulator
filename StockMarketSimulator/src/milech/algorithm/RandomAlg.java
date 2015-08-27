@@ -17,18 +17,18 @@ public class RandomAlg implements StockAlgorithm {
 		generator = new Random();
 	}
 	
-	public Map<String, Integer> chooseStocksToBuy(StockMarket stockMarketTillToday, Wallet wallet) {
+	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
-		if(stockMarketTillToday == null || stockMarketTillToday.getStockMarketSize() == 0) {
+		if(subStockMarket == null || subStockMarket.getStockMarketSize() == 0) {
 			return mapOfStocksToBuy;
 		}
-		int daySize = stockMarketTillToday.getCurrentDay().size();
+		int daySize = subStockMarket.getCurrentDay().size();
 		int stocksToBuyNum =  generator.nextInt(daySize);
 		Integer howManyStocks = 0;
 		Stock randomStock;
 		for(int i = 0; i < stocksToBuyNum; i++) {
 			do {
-				randomStock = stockMarketTillToday.getCurrentDay().get(generator.nextInt(daySize));
+				randomStock = subStockMarket.getCurrentDay().get(generator.nextInt(daySize));
 			} while(mapOfStocksToBuy.containsKey(randomStock.getName()));
 			while((howManyStocks = generator.nextInt(100)) == 0);
 			mapOfStocksToBuy.put(randomStock.getName(), howManyStocks);
@@ -36,7 +36,7 @@ public class RandomAlg implements StockAlgorithm {
 		return mapOfStocksToBuy;
 	}
 	
-	public Map<String, Integer> chooseStocksToSell(Map<String, Integer> customerStocks) {
+	public Map<String, Integer> chooseStocksToSell(StockMarket subStockMarket, Map<String, Integer> customerStocks) {
 		Map<String, Integer> mapOfStocksToSell = new HashMap<String, Integer>();
 		List<String> keys = new ArrayList<String>(customerStocks.keySet());
 		if(keys == null || keys.size() == 0 ) {
