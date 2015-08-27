@@ -100,4 +100,16 @@ public class StockMarketTest {
 				stockMarket.getStockMarketTillToday().toString());
 	}
 	
+	@Test
+	public void shouldGetPKOBPHistory() {
+		stockMarket.moveXDaysForward(2);
+		List<Stock> pkobpHistory = new ArrayList<Stock>();
+		pkobpHistory.add(new Stock("PKOBP", "20130102", "37.35"));
+		pkobpHistory.add(new Stock("PKOBP", "20130103", "37.35"));
+		pkobpHistory.add(new Stock("PKOBP", "20130104", "36.7"));
+		pkobpHistory.add(new Stock("PKOBP", "20130107", "36.13"));
+		
+		assertEquals(pkobpHistory.toString(), stockMarket.getStockHistory("PKOBP").toString());
+	}
+	
 }

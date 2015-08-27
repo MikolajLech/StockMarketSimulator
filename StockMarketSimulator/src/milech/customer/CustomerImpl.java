@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
 import milech.entity.Wallet;
@@ -20,22 +21,18 @@ public class CustomerImpl implements Customer {
 	private Wallet wallet;
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private StockAlgorithm stockAlgorithm;
+	private static int ALGORITHM = 1;
 	
 	@Autowired
 	private BrokerageOffice brokerageOffice;
-	
-	public CustomerImpl(BrokerageOffice brokerageOffice) {
-		init();
-		this.brokerageOffice = brokerageOffice;
-	}
 	
 	public CustomerImpl() {
 		init();
 	}
 	
-	private void init() {
-		wallet = new Wallet(10000);
-		stockAlgorithm = chooseAlgorithm(1);
+	public CustomerImpl(BrokerageOffice brokerageOffice) {
+		init();
+		this.brokerageOffice = brokerageOffice;
 	}
 	
 	private void addStockToCustomerStocks(String companyName, Integer howMuch) {
@@ -80,11 +77,19 @@ public class CustomerImpl implements Customer {
 		if(algNum == 1) {
 			return new RandomAlg();
 		}
+		if(algNum == 2) {
+			return new MovingAverageAlg();
+		}
 		return null;
 	}
 	
 	public float getMoney() {
 		return wallet.getMoney();
+	}
+	
+	private void init() {
+		wallet = new Wallet(10000);
+		stockAlgorithm = chooseAlgorithm(ALGORITHM);
 	}
 	
 	public float sellAll() {

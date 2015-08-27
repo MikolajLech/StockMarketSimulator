@@ -26,27 +26,10 @@ public class StockMarketMapImpl implements StockMarket {
 	private ListIterator iterator;
 	private Reader csvReader;
 	
-	public StockMarketMapImpl(String dataSource) {
-		csvReader = new CsvReader(dataSource);
-		loadAllData();
-		init();
-	}
-	
 	public StockMarketMapImpl() {
 		initCsvReader();
 		loadAllData();
 		init();
-	}
-	
-//	@Value("#{fileName}")
-	private void initCsvReader() {
-		csvReader = new CsvReader("resources/data.csv");
-	}
-	
-	
-	private void init() {
-		days = new LinkedList<Date>(stocks.keySet());
-		iterator = days.listIterator();
 	}
 	
 	public StockMarketMapImpl(Map<Date, List<Stock>> stockMarketMap) {
@@ -54,80 +37,14 @@ public class StockMarketMapImpl implements StockMarket {
 		init();
 	}
 	
-	public int getStockSize() {
-		return stocks.size();
-	}
-	
-	public void loadAllData() {
-		while(loadNextStock() != null) {}
-	}
-	
-	public boolean moveToNextDay() {
-		if(iterator.hasNext()) {
-			iterator.next();
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean backToPreviousDay() {
-		if(iterator.hasPrevious()) {
-			iterator.previous();
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean moveXDaysForward(int howManyDays) {
-		boolean ifLoadedWell = true;
-		for(int i = 0; i < howManyDays && ifLoadedWell; i++) {
-			ifLoadedWell = moveToNextDay();
-		}
-		return ifLoadedWell;
-	}
-	
-	public List<Stock> getCurrentDay() {
-		List<Stock> day = null;
-		if(iterator.hasPrevious()) {
-			day = stocks.get(iterator.previous());
-			iterator.next();
-		}
-		return day;
-	}
-	
-	public StockMarket getStockMarketTillToday() {
-		Map<Date, List<Stock>> stocksTillToday =
-				Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
-		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(stocksTillToday);
-		stockMakretTillToday.moveToNextDay();
-		return stockMakretTillToday;
-	}
-	
-	public Stock loadNextStock() {
-		Stock nextStock = getNextStock();
-		return add(nextStock);
-	}
-	
-	private Stock getNextStock() {
-		String line = "";
-		String csvSplitBy = ",";
-		Stock newStock = new Stock();
-		if((line = csvReader.getNextLine()) != null) {
-			// use comma as separator
-			String[] stockData = line.split(csvSplitBy);
-			newStock.setName(stockData[0]);
-			newStock.setDate(stockData[1]);
-			newStock.setPrice(stockData[2]);
-			return newStock;
-		}
-		return null;
-	}
-
-	public void setDataSource(String dataSource) {
+	public StockMarketMapImpl(String dataSource) {
 		csvReader = new CsvReader(dataSource);
+		loadAllData();
+		init();
 	}
-
-	public Stock add(Stock stock) {
+	
+	
+	private Stock addStock(Stock stock) {
 		if(stock == null) {
 			return null;
 		}
@@ -144,6 +61,138 @@ public class StockMarketMapImpl implements StockMarket {
 		return stock;
 	}
 	
+//	private boolean backToPreviousDay() {
+//		if(iterator.hasPrevious()) {
+//			iterator.previous();
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	private boolean dayHasStock(Date date, String stockName) {
+		List<Stock> day = stocks.get(date);
+		for(Stock stock : day) {
+			if(stock.getName().equals(stockName)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<Stock> getCurrentDay() {
+		List<Stock> day = null;
+		if(iterator.hasPrevious()) {
+			day = stocks.get(iterator.previous());
+			iterator.next();
+		}
+		return day;
+	}
+	
+	private Date getCurrentDayDate() {
+		Date date = null;
+		if(iterator.hasPrevious()) {
+			date = (Date)iterator.previous();
+			iterator.next();
+		}
+		return date;
+	}
+	
+	private Stock getNextStock() {
+		String line = "";
+		String csvSplitBy = ",";
+		Stock newStock = new Stock();
+		if((line = csvReader.getNextLine()) != null) {
+			// use comma as separator
+			String[] stockData = line.split(csvSplitBy);
+			newStock.setName(stockData[0]);
+			newStock.setDate(stockData[1]);
+			newStock.setPrice(stockData[2]);
+			return newStock;
+		}
+		return null;
+	}
+	
+	private Stock getStockFromDay(List<Stock> day, String stockName) {
+		for(Stock stock : day) {
+			if(stock.getName().equals(stockName)) {
+				return stock;
+			}
+		}
+		return null;
+	}
+	
+	public List<Stock> getStockHistory(String stockName) {
+		List<Stock> stockHistory = new ArrayList<Stock>();
+		Stock currentDayStock = null;
+		moveToDayZero();
+		while(moveToNextDay()) {
+			if(dayHasStock(getCurrentDayDate(), stockName)) {
+				currentDayStock = getStockFromDay(stocks.get(getCurrentDayDate()), stockName);
+				stockHistory.add(currentDayStock);
+			}
+		}		
+		return stockHistory;
+	}
+	
+	public int getStockMarketSize() {
+		return stocks.size();
+	}
+	
+	public StockMarket getStockMarketTillToday() {
+		Map<Date, List<Stock>> stocksTillToday =
+				Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
+		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(stocksTillToday);
+		stockMakretTillToday.moveToLastDay();
+		return stockMakretTillToday;
+	}
+	
+	private void init() {
+		days = new LinkedList<Date>(stocks.keySet());
+		moveToDayZero();
+	}
+	
+	//	@Value("#{fileName}")
+	private void initCsvReader() {
+		csvReader = new CsvReader("resources/data.csv");
+	}
+	
+	private void loadAllData() {
+		while(loadNextStock() != null) {}
+	}
+	
+	private Stock loadNextStock() {
+		Stock nextStock = getNextStock();
+		return addStock(nextStock);
+	}
+
+	private void moveToDayZero() {
+		iterator = days.listIterator();
+	}
+
+	private void moveToLastDay() {
+		while(moveToNextDay());
+	}
+	
+	public boolean moveToNextDay() {
+		if(iterator.hasNext()) {
+			iterator.next();
+			return true;
+		}
+		return false;
+	}
+
+	public boolean moveXDaysForward(int howManyDays) {
+		boolean ifLoadedWell = true;
+		for(int i = 0; i < howManyDays && ifLoadedWell; i++) {
+			ifLoadedWell = moveToNextDay();
+		}
+		return ifLoadedWell;
+	}
+
+	public void setDataSource(String dataSource) {
+		csvReader = new CsvReader(dataSource);
+	}
+	
 	public String toString() {
 		String outStr = "";
 		for(Date marketDay : stocks.keySet()) {
@@ -153,6 +202,5 @@ public class StockMarketMapImpl implements StockMarket {
 		}
 		return outStr;
 	}
-	
 
 }
