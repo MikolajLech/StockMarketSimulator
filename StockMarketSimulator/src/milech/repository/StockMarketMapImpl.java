@@ -98,7 +98,9 @@ public class StockMarketMapImpl implements StockMarket {
 	public StockMarket getStockMarketTillToday() {
 		Map<Date, List<Stock>> stocksTillToday =
 				Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
-		return new StockMarketMapImpl(stocksTillToday);
+		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(stocksTillToday);
+		stockMakretTillToday.moveToNextDay();
+		return stockMakretTillToday;
 	}
 	
 	public Stock loadNextStock() {
