@@ -17,7 +17,7 @@ import org.junit.Test;
 public class StockMarketTest {
 	//TODO use spring annotations
 	StockMarket stockMarket;
-	String dataTest = "resources/dataTest.csv";
+	String dataTest = "resources/data.csv";
 	
 	@Before
 	public void initTest() {
@@ -102,14 +102,14 @@ public class StockMarketTest {
 	
 	@Test
 	public void shouldGetPKOBPHistory() {
-		stockMarket.moveXDaysForward(2);
+		stockMarket.moveXDaysForward(4);
 		List<Stock> pkobpHistory = new ArrayList<Stock>();
 		pkobpHistory.add(new Stock("PKOBP", "20130102", "37.35"));
 		pkobpHistory.add(new Stock("PKOBP", "20130103", "37.35"));
 		pkobpHistory.add(new Stock("PKOBP", "20130104", "36.7"));
 		pkobpHistory.add(new Stock("PKOBP", "20130107", "36.13"));
 		
-		assertEquals(pkobpHistory.toString(), stockMarket.getStockHistory("PKOBP").toString());
+		assertEquals(pkobpHistory.toString(), stockMarket.getStockMarketTillToday().getStockHistory("PKOBP").toString());
 	}
 	
 }

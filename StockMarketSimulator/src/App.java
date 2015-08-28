@@ -17,8 +17,9 @@ public class App {
 		Customer customer = (Customer) context.getBean("customer");
 
 		while (stockMarket.moveToNextDay()) {
-			customer.sellWithAlgorithm();
+//			customer.sellWithAlgorithm();
 			customer.buyWithAlgorithm();
+			stockMarket.getCurrentDay();
 		}
 
 		System.out.println("Customers stocks: \n" + customer.toString());

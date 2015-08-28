@@ -11,7 +11,8 @@ import java.util.Locale;
 public class Parser {
 	public static Date parseDate(String date) {
 		Date resultDate = null;
-		DateFormat format = new SimpleDateFormat("yyyymmdd", Locale.ENGLISH);
+		DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+		format.setLenient(false);
 		try {
 			resultDate = format.parse(date);
 		} catch (ParseException e) {

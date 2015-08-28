@@ -18,7 +18,7 @@ public class AlgorithmTest {
 	//TODO use spring annotations
 	StockMarket stockMarket;
 	MovingAverageAlg algorithm;
-	String dataTest = "resources/dataTest.csv";
+	String dataTest = "resources/data.csv";
 	float dataAccuracy = 0.01f;
 	
 	@Before

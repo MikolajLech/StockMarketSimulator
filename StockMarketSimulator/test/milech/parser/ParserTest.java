@@ -16,7 +16,7 @@ public class ParserTest {
 	StockMarket stockMarket;
 	BrokerageOffice brokerageOffice;
 	Customer customer;
-	String dataTest = "resources/dataTest.csv";
+	String dataTest = "resources/data.csv";
 	float dataAccuracy = 0.01f;
 	
 	@Before

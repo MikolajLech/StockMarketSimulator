@@ -12,7 +12,6 @@ import milech.repository.StockMarket;
 
 public class MovingAverageAlg implements StockAlgorithm {
 
-	@Override
 	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
 		if(subStockMarket == null || subStockMarket.getStockMarketSize() == 0) {
@@ -21,7 +20,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 		float movingAverageEstimation;
 //		subStockMarket.moveToDayZero();
 		Integer howManyStocks = 0;
-//		while(subStockMarket.moveToNextDay()) {
+////		while(subStockMarket.moveToNextDay()) {
 			for(Stock stock : subStockMarket.getCurrentDay()) {
 				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), 2);
 				if(movingAverageEstimation > 0) {
@@ -34,7 +33,6 @@ public class MovingAverageAlg implements StockAlgorithm {
 		return mapOfStocksToBuy;
 	}
 
-	@Override
 	public Map<String, Integer> chooseStocksToSell(StockMarket subStockMarket, Map<String, Integer> customerStocks) {
 		Map<String, Integer> mapOfStocksToSell = new HashMap<String, Integer>();
 		if(customerStocks == null || customerStocks.size() == 0) {

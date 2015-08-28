@@ -11,7 +11,7 @@ public class BrokerageOfficeTest {
 	//TODO use spring annotations
 	StockMarket stockMarket;
 	BrokerageOffice brokerageOffice;
-	String dataTest = "resources/dataTest.csv";
+	String dataTest = "resources/data.csv";
 	float dataAccuracy = 0.01f;
 	
 	@Before
