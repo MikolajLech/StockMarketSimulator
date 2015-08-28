@@ -1,6 +1,6 @@
 package milech.entity;
 
-import milech.parser.Parser;
+import milech.stockMarketHelper.StockMarketHelper;
 
 
 public class Wallet {
@@ -11,7 +11,7 @@ public class Wallet {
 	}
 
 	public float getMoney() {
-		money = Parser.round(money, 2);
+		money = StockMarketHelper.round(money, 2);
 		return money;
 	}
 	

@@ -1,4 +1,4 @@
-package milech.parser;
+package milech.stockMarketHelper;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Parser {
+public class StockMarketHelper {
 	public static Date parseDate(String date) {
 		Date resultDate = null;
 		DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
@@ -33,7 +33,7 @@ public class Parser {
 		return resultPrice;
 	}
 	
-	public static int howManyStocksToBuy(float money, float stockPrice) {
+	public static int howManyStocksForThatMoney(float money, float stockPrice) {
 		return (int) (money / stockPrice);
 	}
 	

@@ -10,8 +10,8 @@ import milech.algorithm.MovingAverageAlg;
 import milech.algorithm.RandomAlg;
 import milech.algorithm.StockAlgorithm;
 import milech.entity.Wallet;
-import milech.parser.Parser;
 import milech.service.BrokerageOffice;
+import milech.stockMarketHelper.StockMarketHelper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -65,7 +65,7 @@ public class CustomerImpl implements Customer {
 			wholeStockCost = currentStockPrice * howManyStocks;
 		}
 		wallet.takeMoneyFromWallet(wholeStockCost);
-		howManyStocks = Parser.howManyStocksToBuy(wholeStockCost, currentStockPrice);
+		howManyStocks = StockMarketHelper.howManyStocksForThatMoney(wholeStockCost, currentStockPrice);
 		addStockToCustomerStocks(stockToBuyName, howManyStocks);
 	}
 	
@@ -102,7 +102,7 @@ public class CustomerImpl implements Customer {
 			String stockName = stockNamesIterator.next();
 			resultMoney += sellSameStock(stockName, customerStocks.get(stockName));
 		}
-		return Parser.round(resultMoney, 2);
+		return StockMarketHelper.round(resultMoney, 2);
 	}
 	
 	private void sellManyDifferentStocks(Map<String, Integer> stocksToSell) {

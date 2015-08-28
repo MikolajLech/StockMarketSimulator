@@ -7,9 +7,9 @@ import java.util.Map;
 
 import milech.entity.Stock;
 import milech.entity.Wallet;
-import milech.parser.Parser;
 import milech.repository.StockMarket;
 import milech.service.BrokerageOffice;
+import milech.stockMarketHelper.StockMarketHelper;
 
 public class MovingAverageAlg implements StockAlgorithm {
 
@@ -40,7 +40,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 	}
 	
 	private int howManyStocksToBuy(float movingAverageEstimation, float currentBuyPrice, Wallet wallet) {
-		int stockNumForMoneyFromWallet = Parser.howManyStocksToBuy(
+		int stockNumForMoneyFromWallet = StockMarketHelper.howManyStocksForThatMoney(
 				wallet.getMoney()/2, currentBuyPrice);
 		return (int)(stockNumForMoneyFromWallet * movingAverageEstimation);
 	}
@@ -79,7 +79,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 			result += growthIndicator;
 			timeFactor *= 1.1; // every next day in stock history is 10% more important for the outcome
 		}
-		return Parser.round(result, 2);
+		return StockMarketHelper.round(result, 2);
 	}
 	
 	private List<Stock> getClosedRangeSublist(List<Stock> stocks, int beginIndex, int endIndex) {

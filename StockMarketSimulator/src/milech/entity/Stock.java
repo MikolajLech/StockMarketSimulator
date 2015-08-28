@@ -2,7 +2,7 @@ package milech.entity;
 
 import java.util.Date;
 
-import milech.parser.Parser;
+import milech.stockMarketHelper.StockMarketHelper;
 
 public class Stock {
 	private String name;
@@ -15,8 +15,8 @@ public class Stock {
 	
 	public Stock(String name, String date, String price) {
 		this.name = name;
-		this.date = Parser.parseDate(date);
-		this.price = Parser.parsePrice(price);
+		this.date = StockMarketHelper.parseDate(date);
+		this.price = StockMarketHelper.parsePrice(price);
 	}
 	
 	public boolean equals(Stock compStock) {
@@ -34,14 +34,14 @@ public class Stock {
 	}
 	
 	public void setDate(String date) {
-		this.date = Parser.parseDate(date);
+		this.date = StockMarketHelper.parseDate(date);
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
 	
 	public void setPrice(String price) {
-		this.price = Parser.parsePrice(price);
+		this.price = StockMarketHelper.parsePrice(price);
 	}
 	
 	public String toString() {

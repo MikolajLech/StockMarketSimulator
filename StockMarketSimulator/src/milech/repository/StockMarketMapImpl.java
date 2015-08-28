@@ -100,15 +100,6 @@ public class StockMarketMapImpl implements StockMarket {
 		return days.get(index);
 	}
 	
-	public StockMarket getStockLastXDaysTillToday(int howManyDays) {
-		Map<Date, List<Stock>> lastXDaysTillToday = Maps.filterKeys(stocks, Range
-				.closed(getDateXDaysBack(howManyDays), getCurrentDayDate()));
-		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(
-				lastXDaysTillToday);
-		stockMakretTillToday.moveToLastDay();
-		return stockMakretTillToday;
-	}
-	
 	private Stock getNextStock() {
 		String line = "";
 		String csvSplitBy = ",";
@@ -144,6 +135,15 @@ public class StockMarketMapImpl implements StockMarket {
 			}
 		}		
 		return stockHistory;
+	}
+	
+	public StockMarket getStockLastXDaysTillToday(int howManyDays) {
+		Map<Date, List<Stock>> lastXDaysTillToday = Maps.filterKeys(stocks, Range
+				.closed(getDateXDaysBack(howManyDays), getCurrentDayDate()));
+		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(
+				lastXDaysTillToday);
+		stockMakretTillToday.moveToLastDay();
+		return stockMakretTillToday;
 	}
 	
 	public int getStockMarketDaysNum() {
