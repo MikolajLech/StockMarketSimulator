@@ -12,20 +12,24 @@ import milech.repository.StockMarket;
 
 public class MovingAverageAlg implements StockAlgorithm {
 
+	private int oneAverageScope;
+	
+	public MovingAverageAlg(int oneAverageScope) {
+		this.oneAverageScope = oneAverageScope;
+	}
+	
 	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
 		if(subStockMarket == null || subStockMarket.getStockMarketSize() == 0) {
 			return mapOfStocksToBuy;
 		}
 		float movingAverageEstimation;
-//		subStockMarket.moveToDayZero();
 		Integer howManyStocks = 0;
-////		while(subStockMarket.moveToNextDay()) {
 			for(Stock stock : subStockMarket.getCurrentDay()) {
-				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), 2);
+				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
 				if(movingAverageEstimation > 0) {
 					// TODO [milech] estimate howManyStocks differently
-					howManyStocks = (int)(100 * movingAverageEstimation);
+					howManyStocks = (int)(1000 * movingAverageEstimation);
 					mapOfStocksToBuy.put(stock.getName(), howManyStocks);
 				}
 			}
@@ -39,13 +43,10 @@ public class MovingAverageAlg implements StockAlgorithm {
 			return mapOfStocksToSell;
 		}
 		float movingAverageEstimation;
-		// TODO [milech] consider moving current day of subStockMarket to the last day
-//		subStockMarket.moveToDayZero();
 		Integer howManyStocks = 0;
-//		while(subStockMarket.moveToNextDay()) {
 			for(Stock stock : subStockMarket.getCurrentDay()) {
 				if(customerStocks.containsKey(stock.getName())) {
-					movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), 2);
+					movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
 					if(movingAverageEstimation < 0) {
 						// TODO [milech] estimate howManyStocks differently
 						howManyStocks = (int)(100 * (-movingAverageEstimation));
@@ -64,7 +65,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 			currentAverage = countAverage(getClosedRangeSublist(stockHistory, i + 1, i + scope));
 			growthIndicator = (currentAverage - previousAverage) * timeFactor; // later averages are more important
 			result += growthIndicator;
-			timeFactor *= 1.1; // every next day in stock history is 10% more important for the oucome
+			timeFactor *= 1.1; // every next day in stock history is 10% more important for the outcome
 		}
 		return Parser.round(result, 2);
 	}

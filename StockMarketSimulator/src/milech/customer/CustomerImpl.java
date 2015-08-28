@@ -22,6 +22,7 @@ public class CustomerImpl implements Customer {
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private StockAlgorithm stockAlgorithm;
 	private static int ALGORITHM = 2;
+	private static int DAYSSCOPE = 28;
 	
 	@Autowired
 	private BrokerageOffice brokerageOffice;
@@ -69,7 +70,7 @@ public class CustomerImpl implements Customer {
 	
 	public void buyWithAlgorithm() {
 		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(
-				brokerageOffice.getStockMarket().getLastXDaysTillToday(7), wallet);
+				brokerageOffice.getStockMarket().getLastXDaysTillToday(DAYSSCOPE), wallet);
 		buyManyDifferentStocks(stocksToBuy);
 	}
 	
@@ -78,7 +79,7 @@ public class CustomerImpl implements Customer {
 			return new RandomAlg();
 		}
 		if(algNum == 2) {
-			return new MovingAverageAlg();
+			return new MovingAverageAlg(2);
 		}
 		return null;
 	}
@@ -94,9 +95,6 @@ public class CustomerImpl implements Customer {
 	
 	public float sellAll() {
 		float resultMoney = 0;
-//		for(String stockName : customerStocks.keySet()) {
-//			resultMoney += sellSameStock(stockName, customerStocks.get(stockName));
-//		}
 		List<String> stockNames = new ArrayList<String>(customerStocks.keySet());
 		Iterator<String> stockNamesIterator = stockNames.iterator();
 		while(stockNamesIterator.hasNext()) {
@@ -124,7 +122,7 @@ public class CustomerImpl implements Customer {
 	
 	public void sellWithAlgorithm() {
 		Map<String, Integer> stocksToSell = stockAlgorithm.chooseStocksToSell(
-			brokerageOffice.getStockMarket().getLastXDaysTillToday(7), customerStocks);
+			brokerageOffice.getStockMarket().getLastXDaysTillToday(DAYSSCOPE), customerStocks);
 		sellManyDifferentStocks(stocksToSell);
 	}
 	
@@ -160,6 +158,5 @@ public class CustomerImpl implements Customer {
 		}
 		return resultString;
 	}
-	
 	
 }
