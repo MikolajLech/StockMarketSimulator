@@ -21,7 +21,7 @@ public class CustomerImpl implements Customer {
 	private Wallet wallet;
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private StockAlgorithm stockAlgorithm;
-	private static int ALGORITHM = 1;
+	private static int ALGORITHM = 2;
 	
 	@Autowired
 	private BrokerageOffice brokerageOffice;
@@ -68,10 +68,9 @@ public class CustomerImpl implements Customer {
 	}
 	
 	public void buyWithAlgorithm() {
-//		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(
-//				brokerageOffice.getStockMarket().getStockMarketTillToday(), wallet);
-//		buyManyDifferentStocks(stocksToBuy);
-		brokerageOffice.getStockMarket().getStockMarketTillToday();
+		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(
+				brokerageOffice.getStockMarket().getLastXDaysTillToday(7), wallet);
+		buyManyDifferentStocks(stocksToBuy);
 	}
 	
 	private StockAlgorithm chooseAlgorithm(int algNum) {
@@ -125,7 +124,7 @@ public class CustomerImpl implements Customer {
 	
 	public void sellWithAlgorithm() {
 		Map<String, Integer> stocksToSell = stockAlgorithm.chooseStocksToSell(
-			brokerageOffice.getStockMarket().getStockMarketTillToday(), customerStocks);
+			brokerageOffice.getStockMarket().getLastXDaysTillToday(7), customerStocks);
 		sellManyDifferentStocks(stocksToSell);
 	}
 	

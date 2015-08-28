@@ -15,4 +15,5 @@ public interface StockMarket {
 	public StockMarket getStockMarketTillToday();
 	public List<Stock> getStockHistory(String stockName);
 	public void moveToDayZero();
+	public StockMarket getLastXDaysTillToday(int howManyDays);
 }

@@ -140,10 +140,31 @@ public class StockMarketMapImpl implements StockMarket {
 	
 	public StockMarket getStockMarketTillToday() {
 		Map<Date, List<Stock>> stocksTillToday =
-			Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDay().get(0).getDate()));
+			Maps.filterKeys(stocks, Range.closed(stocks.firstKey(), getCurrentDayDate()));
+//		getCurrentDay().get(0).getDate())
 		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(stocksTillToday);
 		stockMakretTillToday.moveToLastDay();
 		return stockMakretTillToday;
+	}
+	
+	public StockMarket getLastXDaysTillToday(int howManyDays) {
+		Map<Date, List<Stock>> lastXDaysTillToday = Maps.filterKeys(stocks, Range
+				.closed(getDateXDaysBack(howManyDays), getCurrentDayDate()));
+		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(
+				lastXDaysTillToday);
+		stockMakretTillToday.moveToLastDay();
+		return stockMakretTillToday;
+	}
+	
+	private Date getDateXDaysBack(int howManyDaysBack) {
+		int index = iterator.previousIndex();
+		if(index == -1) {
+			return null;
+		}
+		for(int i = 0; index > 0 && i < howManyDaysBack; i++) {
+			index--;
+		}
+		return days.get(index);
 	}
 	
 	private void init() {
