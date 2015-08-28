@@ -9,6 +9,7 @@ import milech.entity.Stock;
 import milech.entity.Wallet;
 import milech.parser.Parser;
 import milech.repository.StockMarket;
+import milech.service.BrokerageOffice;
 
 public class MovingAverageAlg implements StockAlgorithm {
 
@@ -18,45 +19,56 @@ public class MovingAverageAlg implements StockAlgorithm {
 		this.oneAverageScope = oneAverageScope;
 	}
 	
-	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet) {
+	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, BrokerageOffice brokerageOffice, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
-		if(subStockMarket == null || subStockMarket.getStockMarketSize() == 0) {
+		if(subStockMarket == null || subStockMarket.getStockMarketDaysNum() == 0) {
 			return mapOfStocksToBuy;
 		}
 		float movingAverageEstimation;
-		Integer howManyStocks = 0;
-			for(Stock stock : subStockMarket.getCurrentDay()) {
-				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
-				if(movingAverageEstimation > 0) {
-					// TODO [milech] estimate howManyStocks differently
-					howManyStocks = (int)(1000 * movingAverageEstimation);
-					mapOfStocksToBuy.put(stock.getName(), howManyStocks);
-				}
+		float currentStockBuyPrice;
+		for(Stock stock : subStockMarket.getCurrentDay()) {
+			movingAverageEstimation = estimateMovingAverage(
+					subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
+			if(movingAverageEstimation > 0) {
+				currentStockBuyPrice = brokerageOffice.getCurrentBuyPrice(stock.getName());
+				// TODO [milech] divide movingAverageEstiomation by how wide sbuStockMarket is * 10
+				mapOfStocksToBuy.put(stock.getName(), 
+						howManyStocksToBuy(movingAverageEstimation, currentStockBuyPrice, wallet));
 			}
-//		}
+		}
 		return mapOfStocksToBuy;
 	}
+	
+	private int howManyStocksToBuy(float movingAverageEstimation, float currentBuyPrice, Wallet wallet) {
+		int stockNumForMoneyFromWallet = Parser.howManyStocksToBuy(
+				wallet.getMoney()/2, currentBuyPrice);
+		return (int)(stockNumForMoneyFromWallet * movingAverageEstimation);
+	}
 
+	private int howManyStocksToSell(int customerStockNum, float movingAverageEstimation) {
+		return (int)(customerStockNum/2 * (-movingAverageEstimation)); // base selling, half of what customer has
+	}
+	
 	public Map<String, Integer> chooseStocksToSell(StockMarket subStockMarket, Map<String, Integer> customerStocks) {
 		Map<String, Integer> mapOfStocksToSell = new HashMap<String, Integer>();
 		if(customerStocks == null || customerStocks.size() == 0) {
 			return mapOfStocksToSell;
 		}
 		float movingAverageEstimation;
-		Integer howManyStocks = 0;
-			for(Stock stock : subStockMarket.getCurrentDay()) {
-				if(customerStocks.containsKey(stock.getName())) {
-					movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
-					if(movingAverageEstimation < 0) {
-						// TODO [milech] estimate howManyStocks differently
-						howManyStocks = (int)(100 * (-movingAverageEstimation));
-						mapOfStocksToSell.put(stock.getName(), howManyStocks);
-					}
+		int customerStockNum;
+		for(Stock stock : subStockMarket.getCurrentDay()) {
+			if(customerStocks.containsKey(stock.getName())) {
+				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
+				if(movingAverageEstimation < 0) {
+					customerStockNum = customerStocks.get(stock.getName());
+					// TODO [milech] divide movingAverageEstiomation by how wide sbuStockMarket is * 10
+					mapOfStocksToSell.put(stock.getName(), howManyStocksToSell(customerStockNum, movingAverageEstimation));
 				}
 			}
-//		}
+		}
 		return mapOfStocksToSell;
 	}
+	
 	
 	public float estimateMovingAverage(List<Stock> stockHistory, int scope) {
 		float previousAverage = 0, currentAverage = 0, growthIndicator = 0, result = 0, timeFactor = 1;

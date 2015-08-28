@@ -7,5 +7,7 @@ public interface Customer {
 	String toString();
 	void buyWithAlgorithm();
 	void sellWithAlgorithm();
+	void buySameStock(String stockToBuyName, int howManyStocks);
+	float sellSameStock(String stockToSellName, int howManyStocks);
 
 }

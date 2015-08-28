@@ -11,9 +11,9 @@ public interface StockMarket {
 	String toString();
 	void setDataSource(String dataSource);
 	public List<Stock> getCurrentDay();
-	public int getStockMarketSize();
+	public int getStockMarketDaysNum();
 	public StockMarket getStockMarketTillToday();
 	public List<Stock> getStockHistory(String stockName);
 	public void moveToDayZero();
-	public StockMarket getLastXDaysTillToday(int howManyDays);
+	public StockMarket getStockLastXDaysTillToday(int howManyDays);
 }

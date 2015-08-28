@@ -22,7 +22,8 @@ public class CustomerImpl implements Customer {
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private StockAlgorithm stockAlgorithm;
 	private static int ALGORITHM = 2;
-	private static int DAYSSCOPE = 28;
+	private static int DAYSSCOPE = 14;
+	private static int ONEAVERAGESCOPE = 4;
 	
 	@Autowired
 	private BrokerageOffice brokerageOffice;
@@ -49,15 +50,15 @@ public class CustomerImpl implements Customer {
 		}
 	}
 	
-	private void buyManyDifferentStocks(Map<String, Integer> stocksToBuy) {
+	private void buyDifferentStocks(Map<String, Integer> stocksToBuy) {
 		//entry 
 		for(String stockName : stocksToBuy.keySet()) {
 			buySameStock(stockName, stocksToBuy.get(stockName));
 		}
 	}
 	
-	private void buySameStock(String stockToBuyName, int howManyStocks) {
-		float currentStockPrice = brokerageOffice.getCurrentBuyPrice(stockToBuyName);
+	public void buySameStock(String stockToBuyName, int howManyStocks) {
+		float currentStockPrice = brokerageOffice.getCurrentSellPrice(stockToBuyName);
 		float wholeStockCost = currentStockPrice * howManyStocks;
 		while(!wallet.ifWalletCanAfford(wholeStockCost) && howManyStocks > 0) {
 			howManyStocks--;
@@ -70,8 +71,8 @@ public class CustomerImpl implements Customer {
 	
 	public void buyWithAlgorithm() {
 		Map<String, Integer> stocksToBuy = stockAlgorithm.chooseStocksToBuy(
-				brokerageOffice.getStockMarket().getLastXDaysTillToday(DAYSSCOPE), wallet);
-		buyManyDifferentStocks(stocksToBuy);
+				brokerageOffice.getStockMarket().getStockLastXDaysTillToday(DAYSSCOPE), brokerageOffice, wallet);
+		buyDifferentStocks(stocksToBuy);
 	}
 	
 	private StockAlgorithm chooseAlgorithm(int algNum) {
@@ -79,7 +80,7 @@ public class CustomerImpl implements Customer {
 			return new RandomAlg();
 		}
 		if(algNum == 2) {
-			return new MovingAverageAlg(2);
+			return new MovingAverageAlg(ONEAVERAGESCOPE);
 		}
 		return null;
 	}
@@ -110,11 +111,11 @@ public class CustomerImpl implements Customer {
 		}		
 	}
 	
-	private float sellSameStock(String stockToSellName, int howManyStocks) {
+	public float sellSameStock(String stockToSellName, int howManyStocks) {
 		if(howManyStocks > customerStocks.get(stockToSellName)) {
 			howManyStocks = customerStocks.get(stockToSellName);
 		}
-		float wholeStockCost = brokerageOffice.getCurrentSellPrice(stockToSellName) * howManyStocks;
+		float wholeStockCost = brokerageOffice.getCurrentBuyPrice(stockToSellName) * howManyStocks;
 		subtractStockFromCustomerStocks(stockToSellName, howManyStocks);
 		wallet.addMoneyToWallet(wholeStockCost);
 		return wholeStockCost;
@@ -122,7 +123,7 @@ public class CustomerImpl implements Customer {
 	
 	public void sellWithAlgorithm() {
 		Map<String, Integer> stocksToSell = stockAlgorithm.chooseStocksToSell(
-			brokerageOffice.getStockMarket().getLastXDaysTillToday(DAYSSCOPE), customerStocks);
+			brokerageOffice.getStockMarket().getStockLastXDaysTillToday(DAYSSCOPE), customerStocks);
 		sellManyDifferentStocks(stocksToSell);
 	}
 	

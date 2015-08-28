@@ -15,12 +15,10 @@ public class App {
 	    StockMarket stockMarket = (StockMarket) context.getBean("stockMarket");
 		BrokerageOffice brokerageOffice = (BrokerageOffice) context.getBean("brokerageOffice");
 		Customer customer = (Customer) context.getBean("customer");
-		int i = 1;
+
 		while (stockMarket.moveToNextDay()) {
 			customer.sellWithAlgorithm();
 			customer.buyWithAlgorithm();
-			stockMarket.getCurrentDay();
-			System.out.println(i++);
 		}
 
 		System.out.println("Customers stocks: \n" + customer.toString());

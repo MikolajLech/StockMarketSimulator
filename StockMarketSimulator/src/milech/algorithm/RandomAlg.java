@@ -9,6 +9,7 @@ import java.util.Random;
 import milech.entity.Stock;
 import milech.entity.Wallet;
 import milech.repository.StockMarket;
+import milech.service.BrokerageOffice;
 
 public class RandomAlg implements StockAlgorithm {
 	private Random generator;
@@ -17,9 +18,9 @@ public class RandomAlg implements StockAlgorithm {
 		generator = new Random();
 	}
 	
-	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, Wallet wallet) {
+	public Map<String, Integer> chooseStocksToBuy(StockMarket subStockMarket, BrokerageOffice brokerageOffice, Wallet wallet) {
 		Map<String, Integer> mapOfStocksToBuy = new HashMap<String, Integer>();
-		if(subStockMarket == null || subStockMarket.getStockMarketSize() == 0) {
+		if(subStockMarket == null || subStockMarket.getStockMarketDaysNum() == 0) {
 			return mapOfStocksToBuy;
 		}
 		int daySize = subStockMarket.getCurrentDay().size();

@@ -94,13 +94,13 @@ public class StockMarketMapImpl implements StockMarket {
 		if(index == -1) {
 			return null;
 		}
-		for(int i = 0; index > 0 && i < howManyDaysBack; i++) {
+		for(int i = 0; index > 0 && i < howManyDaysBack-1; i++) {
 			index--;
 		}
 		return days.get(index);
 	}
 	
-	public StockMarket getLastXDaysTillToday(int howManyDays) {
+	public StockMarket getStockLastXDaysTillToday(int howManyDays) {
 		Map<Date, List<Stock>> lastXDaysTillToday = Maps.filterKeys(stocks, Range
 				.closed(getDateXDaysBack(howManyDays), getCurrentDayDate()));
 		StockMarketMapImpl stockMakretTillToday = new StockMarketMapImpl(
@@ -146,8 +146,8 @@ public class StockMarketMapImpl implements StockMarket {
 		return stockHistory;
 	}
 	
-	public int getStockMarketSize() {
-		return stocks.size();
+	public int getStockMarketDaysNum() {
+		return days.size();
 	}
 	
 	public StockMarket getStockMarketTillToday() {
