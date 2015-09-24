@@ -22,8 +22,8 @@ public class CustomerImpl implements Customer {
 	private Map<String, Integer> customerStocks = new TreeMap<String, Integer>();
 	private StockAlgorithm stockAlgorithm;
 	private static int ALGORITHM = 2;
-	private static int DAYSSCOPE = 14;
-	private static int ONEAVERAGESCOPE = 4;
+	private static int DAYSSCOPE = 28;
+	private static int ONEAVERAGESCOPE = 7;
 	
 	@Autowired
 	private BrokerageOffice brokerageOffice;
