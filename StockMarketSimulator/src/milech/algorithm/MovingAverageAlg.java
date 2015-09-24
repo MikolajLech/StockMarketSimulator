@@ -13,6 +13,7 @@ import milech.stockMarketHelper.StockMarketHelper;
 
 public class MovingAverageAlg implements StockAlgorithm {
 
+	//TODO [milech] Implement long and short term MA' crossovers
 	private int oneAverageScope;
 	
 	public MovingAverageAlg(int oneAverageScope) {
@@ -31,8 +32,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 					subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
 			if(movingAverageEstimation > 0) {
 				currentStockBuyPrice = brokerageOffice.getCurrentSellPrice(stock.getName());
-				// TODO [milech] divide movingAverageEstiomation by how wide sbuStockMarket is * 10
-				movingAverageEstimation = movingAverageEstimation;
+				// TODO [milech] exclude timeFactor influence
 				mapOfStocksToBuy.put(stock.getName(), 
 						howManyStocksToBuy(movingAverageEstimation, currentStockBuyPrice, wallet));
 			}
@@ -62,7 +62,7 @@ public class MovingAverageAlg implements StockAlgorithm {
 				movingAverageEstimation = estimateMovingAverage(subStockMarket.getStockHistory(stock.getName()), oneAverageScope);
 				if(movingAverageEstimation < 0) {
 					customerStockNum = customerStocks.get(stock.getName());
-					// TODO [milech] divide movingAverageEstiomation by how wide sbuStockMarket is * 10
+					// TODO [milech] exclude timeFactor influence
 					mapOfStocksToSell.put(stock.getName(), howManyStocksToSell(customerStockNum, movingAverageEstimation));
 				}
 			}
@@ -73,13 +73,13 @@ public class MovingAverageAlg implements StockAlgorithm {
 	
 	public float estimateMovingAverage(List<Stock> stockHistory, int scope) {
 		float previousAverage = 0, currentAverage = 0, growthIndicator = 0, result = 0, timeFactor = 1;
-		float timeFactorProgress = 1.02f;
+		float timeFactorProgress = 1.01f;
 		for(int i = 0; i < stockHistory.size() - scope; i ++) {
 			previousAverage = countAverage(getClosedRangeSublist(stockHistory, i, i + scope - 1));
 			currentAverage = countAverage(getClosedRangeSublist(stockHistory, i + 1, i + scope));
 			growthIndicator = (currentAverage - previousAverage) * timeFactor; // later averages are more important
 			result += growthIndicator;
-			timeFactor *= timeFactorProgress; // every next day in stock history is 10% more important for the outcome
+			timeFactor *= timeFactorProgress; // every next day in stock history is 1% more important for the outcome
 		}
 		return StockMarketHelper.round(result, 2);
 	}
